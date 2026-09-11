@@ -15,6 +15,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.utils import timezone
 
+from mizan.apps.audit import services as audit
 from mizan.apps.identity.models import (
     Grant,
     Membership,
@@ -36,6 +37,7 @@ from mizan.platform.api.errors import (
 from mizan.platform.auth.jwt import Realm, issue_access_token
 from mizan.platform.authz.catalog import validate_grant
 from mizan.platform.db.tenancy import platform_scope
+from mizan.platform.events import emit
 
 
 class InvalidCredentials(ApiError):
@@ -106,27 +108,44 @@ def login(
     email: str, password: str, *, tenant_code: str | None = None, user_agent: str = "", ip: str = ""
 ) -> Session:
     """Password login for every realm. Runs under the platform bypass: no tenant is known yet."""
-    with platform_scope(), transaction.atomic():
+    with platform_scope():
         candidates = list(User.objects.filter(email__iexact=email).order_by("created_at"))
         if tenant_code:
             from mizan.apps.org.models import Tenant
 
             tenant_ids = set(Tenant.objects.filter(code=tenant_code).values_list("id", flat=True))
             candidates = [u for u in candidates if u.tenant_id in tenant_ids]
-        if not candidates:
-            # constant-time-ish: still run a hash to blunt user enumeration by timing
-            User().set_password(password)
-            raise InvalidCredentials()
-        if len(candidates) > 1:
-            raise TenantRequired()
-        user = candidates[0]
-        if not user.check_password(password):
-            raise InvalidCredentials()
-        if user.status != UserStatus.ACTIVE:
-            raise AccountDisabled()
+    if not candidates:
+        # still run a hash so that unknown and known e-mails take the same time
+        User().set_password(password)
+        raise InvalidCredentials()
+    if len(candidates) > 1:
+        raise TenantRequired()
+    user = candidates[0]
+    actor = context.Actor(id=user.id, type="CLIENT" if user.realm == "CLIENT" else "USER")
+    if not user.check_password(password):
+        with platform_scope():  # own transaction: the record must survive the error raised next
+            audit.record("user", user.id, "login_failed", tenant_id=user.tenant_id, actor=actor)
+        raise InvalidCredentials()
+    if user.status != UserStatus.ACTIVE:
+        with platform_scope():
+            audit.record(
+                "user", user.id, "login_refused_disabled", tenant_id=user.tenant_id, actor=actor
+            )
+        raise AccountDisabled()
+    with platform_scope():
         user.last_login = timezone.now()
         user.save(update_fields=["last_login"])
-        return _session_for(user, uuid.uuid4(), user_agent=user_agent, ip=ip)
+        session = _session_for(user, uuid.uuid4(), user_agent=user_agent, ip=ip)
+        audit.record(
+            "user",
+            user.id,
+            "login",
+            tenant_id=user.tenant_id,
+            actor=actor,
+            extra={"session_id": session.session_id},
+        )
+        return session
 
 
 def refresh(raw_refresh_token: str, *, user_agent: str = "", ip: str = "") -> Session:
@@ -189,6 +208,7 @@ def change_password(user: User, current_password: str, new_password: str) -> Non
     user.must_change_password = False
     user.save(update_fields=["password", "must_change_password", "updated_at"])
     revoke_all_sessions(user)
+    audit.record("user", user.id, "password_changed", tenant_id=user.tenant_id)
 
 
 # --- users ----------------------------------------------------------------------------
@@ -211,14 +231,24 @@ def create_user(
     )
     user.must_change_password = True
     user.save(update_fields=["must_change_password"])
+    audit.record("user", user.id, "created", after=audit.snapshot(user))
+    emit(
+        "user.invited",
+        aggregate_type="user",
+        aggregate_id=user.id,
+        payload={"email": user.email, "realm": user.realm},
+    )
     return user
 
 
 def disable_user(user: User) -> User:
+    before = audit.snapshot(user)
     user.status = UserStatus.DISABLED
     user.disabled_at = timezone.now()
     user.save(update_fields=["status", "disabled_at", "updated_at"])
     revoke_all_sessions(user)
+    audit.record("user", user.id, "disabled", before=before, after=audit.snapshot(user))
+    emit("user.disabled", aggregate_type="user", aggregate_id=user.id)
     return user
 
 
@@ -245,6 +275,19 @@ def add_membership(
         project_ids=[str(p) for p in (project_ids or [])],
         status=MembershipStatus.ACTIVE,
     )
+    audit.record(
+        "membership",
+        membership.id,
+        "created",
+        after=audit.snapshot(membership),
+        branch_id=branch_id,
+    )
+    emit(
+        "role.changed",
+        aggregate_type="user",
+        aggregate_id=user.id,
+        payload={"membership_id": str(membership.id)},
+    )
     return membership
 
 
@@ -256,6 +299,7 @@ def create_role(
     role: Role = Role.objects.create(code=code, description=description)
     role.set_labels({k: v for k, v in labels.items() if v})
     replace_grants(role, grants)
+    audit.record("role", role.id, "created", after={**audit.snapshot(role), "labels": role.labels})
     return role
 
 
@@ -285,8 +329,22 @@ def replace_grants(role: Role, grants: list[dict[str, Any]]) -> Role:
             )
         )
     with transaction.atomic():
+        before = [
+            audit.snapshot(g, exclude=("id", "created_at", "created_by", "tenant_id", "role_id"))
+            for g in role.grants.all()
+        ]
         role.grants.all().delete()
         Grant.objects.bulk_create(rows)
+        after = [
+            audit.snapshot(g, exclude=("id", "created_at", "created_by", "tenant_id", "role_id"))
+            for g in rows
+        ]
+        audit.record(
+            "role", role.id, "grants_replaced", before={"grants": before}, after={"grants": after}
+        )
+        emit(
+            "role.changed", aggregate_type="role", aggregate_id=role.id, payload={"code": role.code}
+        )
     return role
 
 
@@ -305,8 +363,16 @@ def duplicate_role(role: Role, new_code: str, labels: dict[str, str]) -> Role:
 
 def retire_role(role: Role) -> Role:
     """Roles in use cannot be deleted; they are retired (SPEC §9.4)."""
+    before = audit.snapshot(role)
     role.status = RoleStatus.RETIRED
     role.save(update_fields=["status", "updated_at"])
+    audit.record("role", role.id, "retired", before=before, after=audit.snapshot(role))
+    emit(
+        "role.changed",
+        aggregate_type="role",
+        aggregate_id=role.id,
+        payload={"code": role.code, "status": role.status},
+    )
     return role
 
 

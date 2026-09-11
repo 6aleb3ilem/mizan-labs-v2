@@ -51,13 +51,21 @@ def paginate(
     queryset: QuerySet[Any],
     params: CursorParams,
     serialize: Callable[[Any], Any],
+    *,
+    timestamp_field: str = "created_at",
 ) -> dict[str, Any]:
-    qs = queryset.order_by("-created_at", "-id")
+    qs = queryset.order_by(f"-{timestamp_field}", "-id")
     if params.after:
-        created_at, id_ = decode_cursor(params.after)
-        qs = qs.filter(Q(created_at__lt=created_at) | Q(created_at=created_at, id__lt=id_))
+        stamp, id_ = decode_cursor(params.after)
+        qs = qs.filter(
+            Q(**{f"{timestamp_field}__lt": stamp}) | Q(**{timestamp_field: stamp, "id__lt": id_})
+        )
     rows: Sequence[Any] = list(qs[: params.limit + 1])
     has_more = len(rows) > params.limit
     rows = rows[: params.limit]
-    next_cursor = encode_cursor(rows[-1].created_at, rows[-1].id) if has_more and rows else None
+    next_cursor = (
+        encode_cursor(getattr(rows[-1], timestamp_field), rows[-1].id)
+        if has_more and rows
+        else None
+    )
     return {"items": [serialize(row) for row in rows], "next": next_cursor, "limit": params.limit}

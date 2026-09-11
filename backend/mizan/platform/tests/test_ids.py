@@ -1,3 +1,4 @@
+import re
 import uuid
 
 from mizan.platform.ids import short_id, uuid7
@@ -16,5 +17,4 @@ def test_uuid7_is_monotonic_within_process() -> None:
 
 
 def test_short_id_is_eight_uppercase_hex_chars() -> None:
-    assert len(short_id(uuid7())) == 8
-    assert short_id(uuid7()).isupper() or short_id(uuid7()).isdigit()
+    assert re.fullmatch(r"[0-9A-F]{8}", short_id(uuid7()))
