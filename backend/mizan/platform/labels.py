@@ -40,6 +40,11 @@ def labels_for(
     return result
 
 
+def delete_labels(entity: str, ids: Iterable[uuid.UUID]) -> int:
+    deleted, _ = I18nText.objects.filter(entity=entity, entity_id__in=list(ids)).delete()
+    return int(deleted)
+
+
 def resolve_label(labels: Labels, locale: str, fallbacks: tuple[str, ...] = ("fr", "en")) -> str:
     if locale in labels:
         return labels[locale]
@@ -87,6 +92,19 @@ class LabelledModel(models.Model):
 
     def label(self, locale: str = "fr") -> str:
         return resolve_label(self.labels, locale)
+
+    def delete(self, *args: Any, **kwargs: Any) -> Any:
+        """Labels are not foreign-keyed; remove them with their owner."""
+        delete_labels(self.label_entity_key(), [self.pk])
+        return super().delete(*args, **kwargs)
+
+    @classmethod
+    def delete_labels_of(cls, rows: Iterable[Any]) -> None:
+        by_key: dict[str, list[Any]] = defaultdict(list)
+        for row in rows:
+            by_key[row.label_entity_key()].append(row.pk)
+        for key, ids in by_key.items():
+            delete_labels(key, ids)
 
     @classmethod
     def attach_labels(cls, rows: Iterable[Any]) -> None:

@@ -44,7 +44,12 @@ def test_vocabularies_install_resolve_and_retire(scoped: Any, branch: Any) -> No
     def _count(e: VocabularyEntry) -> int:
         return 3
 
-    assert vocabularies.usage_of(entry) == {"samples": 3}
+    try:
+        assert vocabularies.usage_of(entry) == {"samples": 3}
+    finally:
+        vocabularies._usage["sample_nature"].remove(
+            ("samples", _count)
+        )  # keep the registry clean for other tests
     vocabularies.retire(entry)
     entry.refresh_from_db()
     assert entry.active is False and entry.retired_at is not None
