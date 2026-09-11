@@ -1,0 +1,21 @@
+{
+  "name": "mizan-labs-v2",
+  "private": true,
+  "version": "2.0.0-alpha.0",
+  "description": "Mizan Labs Platform v2 — front-end workspace (back-office, admin console, client portal, verification site)",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "api-client": "pnpm --filter @mizan/api-client generate"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.12"
+  }
+}

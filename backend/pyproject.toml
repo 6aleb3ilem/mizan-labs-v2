@@ -1,0 +1,89 @@
+[project]
+name = "mizan-backend"
+version = "2.0.0a0"
+description = "Mizan Labs Platform v2 — API, workers and scheduler (Django + Django Ninja)"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "django>=5.2,<6",
+  "django-ninja>=1.7",
+  "pydantic>=2.13",
+  "pydantic-settings>=2.15",
+  "psycopg[binary,pool]>=3.3",
+  "procrastinate[django]>=3.9",
+  "weasyprint>=70",
+  "pyhanko>=0.37",
+  "pyhanko-certvalidator>=0.32",
+  "joserfc>=1.7",
+  "segno>=1.6",
+  "django-allauth[mfa]>=65.19",
+  "granian>=2.8",
+  "pint>=0.26",
+  "jinja2>=3.1",
+  "boto3>=1.43",
+  "cryptography>=50",
+  "pillow>=12",
+  "django-cors-headers>=4.9",
+  "orjson>=3.12",
+  "python-dateutil>=2.9",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=9",
+  "pytest-django>=4.14",
+  "factory-boy>=3.3",
+  "hypothesis>=6.168",
+  "freezegun>=1.5",
+  "ruff>=0.16",
+  "mypy>=2.3",
+  "django-stubs[compatible-mypy]>=6.1",
+  "import-linter>=2.15",
+  "pypdf>=6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mizan"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "mizan.config.settings"
+python_files = ["test_*.py"]
+testpaths = ["mizan"]
+addopts = "-q -p no:cacheprovider"
+filterwarnings = [
+  "ignore::joserfc.errors.SecurityWarning",
+]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+strict = true
+warn_unreachable = true
+ignore_missing_imports = true
+exclude = ["migrations/"]
+
+[[tool.mypy.overrides]]
+module = ["*.migrations.*", "*.tests.*"]
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "mizan.config.settings"
+
+[tool.importlinter]
+root_package = "mizan"
+
+[[tool.importlinter.contracts]]
+name = "Platform never imports business apps"
+type = "forbidden"
+source_modules = ["mizan.platform"]
+forbidden_modules = ["mizan.apps"]
+
+[[tool.importlinter.contracts]]
+name = "Settings package is a leaf (imported by nobody)"
+type = "forbidden"
+source_modules = ["mizan.apps", "mizan.platform"]
+forbidden_modules = ["mizan.config"]

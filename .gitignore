@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+*.egg-info/
+backend/.env
+backend/var/
+backend/media/
+backend/staticfiles/
+
+# Node
+node_modules/
+.turbo/
+dist/
+storybook-static/
+*.tsbuildinfo
+frontend/packages/api-client/src/generated/openapi.json
+
+# Infra
+infra/terraform/**/.terraform/
+infra/terraform/**/*.tfstate*
+infra/terraform/**/*.tfvars
+!infra/terraform/**/*.example.tfvars
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.log

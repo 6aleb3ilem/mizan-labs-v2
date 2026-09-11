@@ -1,0 +1,28 @@
+# Mizan Labs Platform v2 — uv workspace root (virtual: no package of its own).
+# The Python project lives in backend/; tooling configuration shared by the repo lives here.
+
+[tool.uv.workspace]
+members = ["backend"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["backend"]
+extend-exclude = ["**/migrations/**", "frontend", "infra", "node_modules", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ", "SIM", "RUF", "C4", "PIE", "PL"]
+ignore = [
+  "RUF012",  # Django class attributes are conventionally mutable
+  "PLR0913", # services legitimately take many keyword arguments
+  "PLR2004", # magic values are checked case by case
+  "PLR0912", "PLR0915", "PLR0911", "PLC0415", "PLW2901",
+  "DJ001",   # nullable text columns are used deliberately for optional values
+  "E501",    # handled by the formatter
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mizan"]
+
+[tool.ruff.format]
+quote-style = "double"
