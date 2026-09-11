@@ -10,6 +10,7 @@ from typing import Any
 
 from django.db.models import Model, Q, QuerySet
 from django.http import HttpRequest
+from ninja.security import HttpBearer
 
 from mizan.apps.identity.models import Grant, Membership, MembershipStatus, RoleStatus
 from mizan.apps.identity.principal import Principal
@@ -118,16 +119,61 @@ def authorize(request: HttpRequest, resource: str, action: str) -> Authorization
     return authz
 
 
+class Requires(HttpBearer):
+    """Ninja auth callback checking one permission before the request body is parsed."""
+
+    def __init__(self, resource: str, action: str) -> None:
+        super().__init__()
+        self.resource = resource
+        self.action = action
+
+    def __call__(self, request: HttpRequest) -> Principal | None:
+        principal: Principal | None = getattr(request, "principal", None)
+        if principal is None:
+            return None  # Ninja turns this into 401
+        authorize(request, self.resource, self.action)  # raises Forbidden (403)
+        return principal
+
+    def authenticate(self, request: HttpRequest, token: str) -> Any:
+        return self(request)
+
+
 def requires(resource: str, action: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """Declare the ``(resource, action)`` of an API operation (SPEC §33.1 rule 3)."""
+    """Declare the ``(resource, action)`` of an API operation (SPEC §33.1 rule 3).
+
+    ``install_permissions`` later moves the check into the operation's auth callbacks so it
+    runs before body validation; the decorator still guards direct calls to the view.
+    """
 
     def decorator(view: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(view)
         def wrapper(request: HttpRequest, *args: Any, **kwargs: Any) -> Any:
-            authorize(request, resource, action)
+            if getattr(request, "authz", None) is None or request.authz.resource != resource:  # type: ignore[attr-defined]
+                authorize(request, resource, action)
             return view(request, *args, **kwargs)
 
         wrapper.permission = (resource, action)  # type: ignore[attr-defined]
         return wrapper
 
     return decorator
+
+
+def install_permissions(api: Any) -> dict[str, tuple[str, str]]:
+    """Attach ``Requires`` auth callbacks and ``x-permission`` to every declared operation."""
+    declared: dict[str, tuple[str, str]] = {}
+    for _prefix, router in api._routers:
+        for path, path_view in router.path_operations.items():
+            for operation in path_view.operations:
+                permission = getattr(operation.view_func, "permission", None)
+                if permission is None:
+                    continue
+                resource, action = permission
+                # _set_auth records the explicit auth so binding keeps it instead of the API default
+                guard = Requires(resource, action)
+                operation.auth_param = guard  # an explicit auth survives cloning into bound routers
+                operation.auth_callbacks = [guard]
+                extra = dict(operation.openapi_extra or {})
+                extra["x-permission"] = f"{resource}.{action}"
+                operation.openapi_extra = extra
+                declared[f"{','.join(operation.methods)} {path}"] = permission
+    return declared
