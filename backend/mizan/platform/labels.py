@@ -50,7 +50,12 @@ def resolve_label(labels: Labels, locale: str, fallbacks: tuple[str, ...] = ("fr
 
 
 class LabelledModel(models.Model):
-    """Mixin for configurable entities: ``code`` plus translated labels in ``i18n_text``."""
+    """Mixin for configurable entities: ``code`` plus translated labels in ``i18n_text``.
+
+    Labels are unique per ``(entity, field, locale, text)`` within a tenant (SPEC §8). The
+    entity key includes ``label_scope`` so that lists living under different parents (the
+    states of two workflows, the entries of two vocabularies) may reuse the same words.
+    """
 
     label_entity: ClassVar[str] = ""
 
@@ -58,15 +63,25 @@ class LabelledModel(models.Model):
         abstract = True
 
     @property
+    def label_scope(self) -> str:
+        """Override to narrow uniqueness (e.g. the parent's id). Empty means tenant-wide."""
+        return ""
+
+    def label_entity_key(self) -> str:
+        base = self.label_entity or self._meta.db_table
+        scope = self.label_scope
+        return f"{base}/{scope}" if scope else base
+
+    @property
     def labels(self) -> Labels:
         cached: Labels | None = getattr(self, "_labels_cache", None)
         if cached is None:
-            cached = get_labels(self._label_entity(), self.pk)
+            cached = get_labels(self.label_entity_key(), self.pk)
             self._labels_cache = cached
         return cached
 
     def set_labels(self, labels: Labels, *, field: str = "label") -> None:
-        set_labels(self._label_entity(), self.pk, labels, field=field)
+        set_labels(self.label_entity_key(), self.pk, labels, field=field)
         if field == "label":
             self._labels_cache = {**getattr(self, "_labels_cache", {}), **labels}
 
@@ -74,12 +89,11 @@ class LabelledModel(models.Model):
         return resolve_label(self.labels, locale)
 
     @classmethod
-    def _label_entity(cls) -> str:
-        return cls.label_entity or cls._meta.db_table
-
-    @classmethod
     def attach_labels(cls, rows: Iterable[Any]) -> None:
-        rows = list(rows)
-        found = labels_for(cls._label_entity(), [r.pk for r in rows])
+        by_key: dict[str, list[Any]] = defaultdict(list)
         for row in rows:
-            row._labels_cache = found.get(row.pk, {})
+            by_key[row.label_entity_key()].append(row)
+        for key, group in by_key.items():
+            found = labels_for(key, [r.pk for r in group])
+            for row in group:
+                row._labels_cache = found.get(row.pk, {})

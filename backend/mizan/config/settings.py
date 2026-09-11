@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "mizan.apps.identity",
     "mizan.apps.org",
     "mizan.apps.audit",
+    "mizan.apps.config",
 ]
 
 MIDDLEWARE = [

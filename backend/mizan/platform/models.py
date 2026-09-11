@@ -21,7 +21,7 @@ class I18nText(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     tenant_id = models.UUIDField(default=_default_tenant_id, db_index=True)
-    entity = models.CharField(max_length=64)
+    entity = models.CharField(max_length=200)  # "<entity>/<scope>" keys, see LabelledModel
     entity_id = models.UUIDField()
     field = models.CharField(max_length=32, default="label")
     locale = models.CharField(max_length=8)
