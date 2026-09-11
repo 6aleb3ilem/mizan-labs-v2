@@ -12,6 +12,16 @@ from django.test import Client
 from mizan.platform.db.tenancy import platform_scope, tenant_scope
 
 
+@pytest.fixture(autouse=True)
+def _clear_cache() -> Iterator[None]:
+    """Throttle counters live in the cache; every test starts with a clean slate."""
+    from django.core.cache import cache
+
+    cache.clear()
+    yield
+    cache.clear()
+
+
 @pytest.fixture
 def tenant(db: Any) -> Any:
     from mizan.apps.org.models import Tenant
@@ -54,7 +64,7 @@ def staff_user(scoped: Any) -> Any:
     from mizan.apps.identity.models import User
 
     return User.objects.create_user(
-        "aicha@mizanlabs.test",
+        "aicha@mizanlabs.dev",
         "Passw0rd!Passw0rd",
         tenant_id=scoped.id,
         display_name="Aïcha",

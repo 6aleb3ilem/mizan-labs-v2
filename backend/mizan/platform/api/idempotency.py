@@ -21,7 +21,7 @@ from typing import Any
 import orjson
 from django.http import HttpRequest, HttpResponse
 from django.utils import timezone
-from ninja import Schema
+from ninja import Schema, Status
 
 from mizan.platform import context
 from mizan.platform.api.errors import Conflict
@@ -44,7 +44,9 @@ def _fingerprint(request: HttpRequest) -> str:
 def _to_json(result: Any) -> tuple[int, Any]:
     status = 200
     body = result
-    if isinstance(result, tuple) and len(result) == 2 and isinstance(result[0], int):
+    if isinstance(result, Status):
+        status, body = result.status_code, result.value
+    elif isinstance(result, tuple) and len(result) == 2 and isinstance(result[0], int):
         status, body = result
     if isinstance(body, Schema):
         body = body.model_dump(mode="json")

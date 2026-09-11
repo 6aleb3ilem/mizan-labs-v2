@@ -111,10 +111,10 @@ def test_platform_users_are_visible_everywhere(tenant: Tenant) -> None:
     from mizan.apps.identity.models import User
 
     with platform_scope():
-        operator = User.objects.create_superuser("ops@platform.test", "Passw0rd!Passw0rd")
+        operator = User.objects.create_superuser("ops@mizan-platform.dev", "Passw0rd!Passw0rd")
     assert User.objects.filter(pk=operator.pk).exists(), "NULL-tenant rows are global"
     with tenant_scope(tenant.id):
-        User.objects.create_user("staff@t1.test", tenant_id=tenant.id)
+        User.objects.create_user("staff@t1.dev", tenant_id=tenant.id)
         assert User.objects.count() == 2
     with tenant_scope(uuid.uuid4()):
         assert User.objects.count() == 1

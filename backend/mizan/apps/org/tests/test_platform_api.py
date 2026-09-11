@@ -46,7 +46,7 @@ def test_me_with_bearer_token(api: Client, staff_user: object) -> None:
     response = api.get("/api/v1/me")
     assert response.status_code == 200, response.content
     body = response.json()
-    assert body["email"] == "aicha@mizanlabs.test"
+    assert body["email"] == "aicha@mizanlabs.dev"
     assert body["realm"] == "STAFF"
     assert body["tenant_id"] == str(staff_user.tenant_id)  # type: ignore[attr-defined]
 
