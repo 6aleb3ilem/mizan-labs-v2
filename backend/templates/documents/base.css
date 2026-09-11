@@ -1,0 +1,34 @@
+/* Common frame of every official document (SPEC Appendix D.1). Fonts: DejaVu Sans / Noto Sans embedded. */
+@page {
+  size: A4;
+  margin: 18mm 15mm 22mm 15mm;
+  @bottom-left { content: element(footer-left); }
+  @bottom-right { content: "Page " counter(page) " / " counter(pages); font-size: 8pt; color: #5b6472; }
+}
+html { font-family: "DejaVu Sans", "Noto Sans", sans-serif; font-size: 9.5pt; color: #111827; }
+body { margin: 0; }
+h1 { font-size: 15pt; margin: 0 0 4mm 0; letter-spacing: 0.2px; }
+h2 { font-size: 11pt; margin: 6mm 0 2mm 0; border-bottom: 1px solid #d9dee7; padding-bottom: 1mm; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #d9dee7; padding: 1.6mm 2mm; vertical-align: top; }
+th { background: #eef1f5; text-align: left; font-weight: 600; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.header { display: flex; justify-content: space-between; border-bottom: 2px solid #1f5eff; padding-bottom: 3mm; margin-bottom: 6mm; }
+.header .identity { font-size: 8.5pt; color: #5b6472; text-align: right; }
+.header .identity strong { color: #111827; font-size: 10pt; }
+.doc-title { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4mm; }
+.doc-title .number { font-size: 12pt; font-weight: 700; }
+.muted { color: #5b6472; }
+.box { border: 1px solid #d9dee7; border-radius: 2mm; padding: 3mm; }
+.grid-2 { display: flex; gap: 6mm; }
+.grid-2 > * { flex: 1; }
+.footer-left { position: running(footer-left); font-size: 8pt; color: #5b6472; display: flex; gap: 4mm; align-items: center; }
+.footer-left img { width: 18mm; height: 18mm; }
+.totals td { border: none; padding: 1mm 2mm; }
+.totals tr.total td { font-weight: 700; border-top: 1px solid #111827; }
+.signatures { display: flex; justify-content: space-between; margin-top: 10mm; }
+.signatures .sig { width: 60mm; min-height: 28mm; border-top: 1px solid #111827; padding-top: 2mm; font-size: 8.5pt; }
+.signatures .sig img { max-height: 22mm; }
+.watermark { position: fixed; top: 40%; left: 10%; font-size: 64pt; color: rgba(198, 40, 40, 0.12); transform: rotate(-25deg); font-weight: 700; }
+.excluded { color: #c62828; text-decoration: line-through; }
+.note { font-size: 8.5pt; color: #5b6472; }

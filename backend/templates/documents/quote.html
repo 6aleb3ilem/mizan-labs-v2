@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="{{ document.locale }}">
+<head><meta charset="utf-8"><title>{{ document.number }}</title></head>
+<body>
+{% include "_frame_header.html" %}
+{% set fr = document.locale == 'fr' %}
+<div class="doc-title">
+  <h1>{{ "Devis" if fr else "Quote" }}</h1>
+  <div class="number">{{ document.number }} · {{ "rév." if fr else "rev." }} {{ quote.revision_no }}</div>
+</div>
+<div class="grid-2">
+  <div class="box">
+    <strong>{{ account.legal_name }}</strong><br>
+    {% if contact %}{{ contact.first_name }} {{ contact.last_name }}<br>{% endif %}
+    {{ account.address or "" }}
+  </div>
+  <div class="box">
+    <div><span class="muted">{{ "Projet" if fr else "Project" }}</span> {{ project.number }} — {{ project.title }}</div>
+    <div><span class="muted">{{ "Lieu" if fr else "Location" }}</span> {{ project.location or "" }}</div>
+    <div><span class="muted">Date</span> {{ document.issued_at | date(document.locale) }}</div>
+    <div><span class="muted">{{ "Validité" if fr else "Validity" }}</span> {{ quote.validity_days }} {{ "jours" if fr else "days" }}</div>
+  </div>
+</div>
+{% if quote.object %}<p>{{ quote.object }}</p>{% endif %}
+<h2>{{ "Prestations" if fr else "Services" }}</h2>
+<table>
+  <thead><tr><th>#</th><th>{{ "Désignation" if fr else "Designation" }}</th><th>{{ "Unité" if fr else "Unit" }}</th><th class="num">{{ "Qté" if fr else "Qty" }}</th><th class="num">{{ "P.U." if fr else "Unit price" }}</th><th class="num">Total</th></tr></thead>
+  <tbody>
+  {% for task in quote.tasks %}
+    <tr><td colspan="6"><strong>{{ task.title }}</strong></td></tr>
+    {% for line in task.lines %}
+    <tr>
+      <td>{{ loop.index }}</td><td>{{ line.description }}</td><td>{{ line.unit }}</td>
+      <td class="num">{{ line.quantity | number(0, document.locale) }}</td>
+      {% if line.billable %}
+      <td class="num">{{ line.unit_price | money("", document.locale) }}</td><td class="num">{{ line.line_total | money("", document.locale) }}</td>
+      {% else %}<td class="num">PM</td><td class="num">PM</td>{% endif %}
+    </tr>
+    {% endfor %}
+  {% endfor %}
+  </tbody>
+</table>
+<table class="totals" style="width:70mm; margin-left:auto; margin-top:3mm">
+  <tr><td>{{ "Sous-total" if fr else "Subtotal" }}</td><td class="num">{{ quote.subtotal | money(quote.currency, document.locale) }}</td></tr>
+  {% if quote.discount_amount and quote.discount_amount != "0.00" %}<tr><td>{{ "Remise" if fr else "Discount" }} {{ quote.discount_label }}</td><td class="num">− {{ quote.discount_amount | money(quote.currency, document.locale) }}</td></tr>{% endif %}
+  <tr><td>{{ "Base imposable" if fr else "Taxable" }}</td><td class="num">{{ quote.taxable | money(quote.currency, document.locale) }}</td></tr>
+  <tr><td>{{ "TVA" if fr else "VAT" }} {{ quote.tax_rate }} %</td><td class="num">{{ quote.tax_amount | money(quote.currency, document.locale) }}</td></tr>
+  <tr class="total"><td>Total</td><td class="num">{{ quote.total | money(quote.currency, document.locale) }}</td></tr>
+</table>
+{% if quote.total_in_words %}<p class="note">{{ "Arrêté à la somme de" if fr else "Amount in words" }} : {{ quote.total_in_words }}</p>{% endif %}
+<h2>{{ "Modalités de paiement" if fr else "Payment schedule" }}</h2>
+<table>
+  <thead><tr><th>{{ "Jalon" if fr else "Milestone" }}</th><th class="num">%</th><th class="num">{{ "Montant" if fr else "Amount" }}</th><th>{{ "Déclencheur" if fr else "Trigger" }}</th></tr></thead>
+  <tbody>{% for m in quote.milestones %}<tr><td>{{ m.label }}</td><td class="num">{{ m.percent }}</td><td class="num">{{ m.amount | money(quote.currency, document.locale) }}</td><td>{{ m.trigger_label }}</td></tr>{% endfor %}</tbody>
+</table>
+{% if quote.conditions %}<h2>{{ "Conditions" if fr else "Conditions" }}</h2><ul>{% for c in quote.conditions %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+{% if quote.notes_client %}<p>{{ quote.notes_client }}</p>{% endif %}
+<div class="signatures">
+  <div class="sig">{{ "Le Client (bon pour accord)" if fr else "The Client (agreed)" }}</div>
+  <div class="sig">{% if document.signatory %}{{ document.signatory.name }}<br><span class="muted">{{ document.signatory.title }}</span>{% endif %}{% if document.signature_image %}<br><img src="{{ document.signature_image }}" alt="">{% endif %}</div>
+</div>
+</body>
+</html>

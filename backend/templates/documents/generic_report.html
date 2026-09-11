@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="{{ document.locale }}">
+<head><meta charset="utf-8"><title>{{ document.number }}</title></head>
+<body>
+{% include "_frame_header.html" %}
+{% set fr = document.locale == 'fr' %}
+<div class="doc-title"><h1>{{ report.title }}</h1><div class="number">{{ document.number }}</div></div>
+<table>
+  <tr><th>{{ "Client" if fr else "Account" }}</th><td>{{ account.legal_name }}</td><th>{{ "Projet" if fr else "Project" }}</th><td>{{ project.number }} — {{ project.title }}</td></tr>
+  <tr><th>{{ "Échantillon" if fr else "Sample" }}</th><td>{{ sample.name or "" }} ({{ sample.nature or "" }})</td><th>{{ "Méthode" if fr else "Method" }}</th><td>{{ report.method_ref or "" }}</td></tr>
+  <tr><th>{{ "Réception" if fr else "Intake" }}</th><td>{{ intake.number }} · {{ intake.received_at | date(document.locale) }}</td><th>{{ "Date d'essai" if fr else "Test date" }}</th><td>{{ run.tested_at | date(document.locale) }}</td></tr>
+</table>
+<h2>{{ "Résultats" if fr else "Results" }}</h2>
+{% if report.columns %}
+<table>
+  <thead><tr>{% for col in report.columns %}<th class="num">{{ col.label }}</th>{% endfor %}</tr></thead>
+  <tbody>{% for row in report.rows %}<tr>{% for col in report.columns %}<td class="num">{{ row[col.key] }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+</table>
+{% endif %}
+{% if report.aggregates %}
+<table style="margin-top:3mm">{% for agg in report.aggregates %}<tr><th>{{ agg.label }}</th><td class="num">{{ agg.value }} {{ agg.unit }}</td></tr>{% endfor %}</table>
+{% endif %}
+{% for n in report.notes %}<p class="note">{{ n }}</p>{% endfor %}
+<div class="signatures"><div></div><div class="sig">{% if document.signatory %}{{ document.signatory.name }}<br><span class="muted">{{ document.signatory.title }}</span>{% endif %}{% if document.signature_image %}<br><img src="{{ document.signature_image }}" alt="">{% endif %}</div></div>
+</body>
+</html>

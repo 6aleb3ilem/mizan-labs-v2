@@ -16,6 +16,21 @@ from mizan.platform.db.tenancy import platform_scope, tenant_scope
 
 
 @pytest.fixture(autouse=True)
+def _isolated_files(settings: Any, tmp_path_factory: pytest.TempPathFactory) -> Iterator[None]:
+    """Signing keys and object storage live in a temporary directory during tests."""
+    from mizan.platform import storage
+
+    root = tmp_path_factory.mktemp("mizan")
+    settings.MIZAN_SIGNING_LOCAL_DIR = root / "keys"
+    settings.MIZAN_STORAGE_LOCAL_ROOT = root / "storage"
+    storage.documents_storage.cache_clear()
+    storage.attachments_storage.cache_clear()
+    yield
+    storage.documents_storage.cache_clear()
+    storage.attachments_storage.cache_clear()
+
+
+@pytest.fixture(autouse=True)
 def _clear_cache() -> Iterator[None]:
     """Throttle counters live in the cache; every test starts with a clean slate."""
     from django.core.cache import cache

@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="{{ document.locale }}">
+<head><meta charset="utf-8"><title>{{ document.number }}</title>
+<style>@page { size: 50mm 30mm; margin: 2mm; } html { font-family: "DejaVu Sans", sans-serif; font-size: 7pt; } .label { display:flex; gap:2mm } .label img { width: 22mm; height: 22mm } .big { font-size: 10pt; font-weight: 700 }</style>
+</head>
+<body>
+{% for specimen in specimens %}
+<div class="label" style="page-break-after: always">
+  <img src="{{ specimen.qr_svg }}" alt="">
+  <div><div class="big">{{ intake.number }} · {{ specimen.position }}</div><div>{{ project.short_title }}</div><div>{{ specimen.specimen_type }} · {{ specimen.age }} j · {{ specimen.due_date | date(document.locale) }}</div></div>
+</div>
+{% endfor %}
+</body>
+</html>

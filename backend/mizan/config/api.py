@@ -37,12 +37,16 @@ def _register_app_routers() -> None:
     """Routers are registered lazily so that apps can import the API module for schemas."""
     from mizan.apps.audit.api import router as audit_router
     from mizan.apps.config.api import router as config_router
+    from mizan.apps.documents.api import router as documents_router
+    from mizan.apps.documents.api import verify_router
     from mizan.apps.identity.api import router as identity_router
     from mizan.apps.org.api import router as org_router
 
     api.add_router("", identity_router)
     api.add_router("", org_router)
     api.add_router("", config_router)
+    api.add_router("", documents_router)
+    api.add_router("", verify_router)
     api.add_router("", audit_router)
 
 

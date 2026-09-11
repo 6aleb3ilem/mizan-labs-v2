@@ -1,0 +1,19 @@
+{# Header and footer shared by every kind; included by each template. #}
+{% if document.watermark %}<div class="watermark">{{ document.watermark }}</div>{% endif %}
+<div class="header">
+  <div class="logo"><strong style="font-size:13pt">{{ branch.trade_name or branch.legal_name }}</strong></div>
+  <div class="identity">
+    <strong>{{ branch.legal_name }}</strong><br>
+    {{ branch.address.line1 or "" }} {{ branch.address.city or "" }}<br>
+    {% if branch.phone %}{{ branch.phone }} · {% endif %}{{ branch.email }}<br>
+    {% for k, v in branch.identifiers.items() %}{{ k }} {{ v }}{% if not loop.last %} · {% endif %}{% endfor %}
+  </div>
+</div>
+<div class="footer-left">
+  {% if document.qr_svg %}<img src="{{ document.qr_svg }}" alt="QR">{% endif %}
+  <div>
+    {% if document.locale == 'fr' %}Code de vérification{% else %}Verification code{% endif %} <strong>{{ document.short_code }}</strong><br>
+    {% if document.locale == 'fr' %}Vérifiez ce document sur{% else %}Verify this document at{% endif %} {{ document.verify_site }}<br>
+    <span class="muted">{{ document.number }} · {% if document.locale == 'fr' %}modèle{% else %}template{% endif %} v{{ document.template_version }}</span>
+  </div>
+</div>

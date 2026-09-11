@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{ document.locale }}">
+<head><meta charset="utf-8"><title>{{ document.number }}</title></head>
+<body>
+{% include "_frame_header.html" %}
+{% set fr = document.locale == 'fr' %}
+<div class="doc-title">
+  <h1>{{ "Procès-verbal d'écrasement d'éprouvettes de béton" if fr else "Concrete compressive strength report" }}</h1>
+  <div class="number">{{ document.number }}{% if report.version and report.version > 1 %} · v{{ report.version }}{% endif %}</div>
+</div>
+<div class="grid-2">
+  <table>
+    <tr><th>{{ "Client" if fr else "Account" }}</th><td>{{ account.legal_name }}</td></tr>
+    <tr><th>{{ "Projet" if fr else "Project" }}</th><td>{{ project.number }} — {{ project.title }}</td></tr>
+    <tr><th>{{ "Chantier" if fr else "Site" }}</th><td>{{ intake.fields.site or project.location or "" }}</td></tr>
+    <tr><th>{{ "Partie d'ouvrage" if fr else "Structure part" }}</th><td>{{ intake.fields.structure_part or "" }}</td></tr>
+    <tr><th>{{ "Prélèvement" if fr else "Sampled by" }}</th><td>{{ intake.fields.sampling_by or "" }}</td></tr>
+  </table>
+  <table>
+    <tr><th>{{ "Réception" if fr else "Intake" }}</th><td>{{ intake.number }} · {{ intake.received_at | date(document.locale) }}</td></tr>
+    <tr><th>{{ "Date de fabrication" if fr else "Fabrication date" }}</th><td>{{ intake.fields.fabrication_date | date(document.locale) }}</td></tr>
+    <tr><th>{{ "Date d'essai" if fr else "Test date" }}</th><td>{{ run.tested_at | date(document.locale) }}</td></tr>
+    <tr><th>{{ "Âge" if fr else "Age" }}</th><td>{{ run.age }} {{ "jours" if fr else "days" }}</td></tr>
+    <tr><th>{{ "Affaissement" if fr else "Slump" }}</th><td>{{ intake.fields.slump_cm or "" }} cm</td></tr>
+  </table>
+</div>
+{% if intake.fields.mix_design %}
+<h2>{{ "Formulation" if fr else "Mix design" }}</h2>
+<table><thead><tr><th>{{ "Constituant" if fr else "Constituent" }}</th><th>{{ "Désignation" if fr else "Name" }}</th><th class="num">{{ "Dosage" if fr else "Dosage" }}</th></tr></thead>
+<tbody>{% for key, item in intake.fields.mix_design.items() %}{% if item.name %}<tr><td>{{ key }}</td><td>{{ item.name }}</td><td class="num">{{ item.dosage }}</td></tr>{% endif %}{% endfor %}</tbody></table>
+{% endif %}
+<h2>{{ "Résultats" if fr else "Results" }}</h2>
+<table>
+  <thead><tr><th>Ref</th><th>Type</th><th class="num">{{ "Âge (j)" if fr else "Age (d)" }}</th><th class="num">{{ "Masse (kg)" if fr else "Weight (kg)" }}</th><th class="num">{{ "Charge (kgf)" if fr else "Load (kgf)" }}</th><th class="num">kg/cm²</th><th class="num">MPa</th></tr></thead>
+  <tbody>
+  {% for s in run.specimens %}
+  <tr class="{% if s.excluded %}excluded{% endif %}">
+    <td>{{ s.ref }}</td><td>{{ s.specimen_type }}</td><td class="num">{{ run.age }}</td>
+    <td class="num">{{ s.weight_kg | number(2, document.locale) }}</td><td class="num">{{ s.load_kgf | number(0, document.locale) }}</td>
+    <td class="num">{{ s.stress_kgcm2 | number(0, document.locale) }}</td><td class="num">{{ s.stress_mpa | number(1, document.locale) }}</td>
+  </tr>
+  {% endfor %}
+  <tr><td colspan="6"><strong>{{ "Résistance moyenne" if fr else "Mean strength" }}</strong> ({{ run.n_tested }} {{ "éprouvettes" if fr else "specimens" }})</td><td class="num"><strong>{{ run.mean_mpa | number(1, document.locale) }} MPa</strong></td></tr>
+  </tbody>
+</table>
+{% if run.notes %}{% for n in run.notes %}<p class="note">{{ n }}</p>{% endfor %}{% endif %}
+<p class="note">{{ "Opérateur" if fr else "Operator" }} : {{ run.operator or "" }} · {{ "Instrument" if fr else "Instrument" }} : {{ run.instrument or "" }} · {{ "Vérifié par" if fr else "Reviewed by" }} : {{ run.reviewer or "" }}</p>
+<div class="signatures">
+  <div></div>
+  <div class="sig">{% if document.signatory %}{{ document.signatory.name }}<br><span class="muted">{{ document.signatory.title }}</span>{% endif %}{% if document.signature_image %}<br><img src="{{ document.signature_image }}" alt="">{% endif %}</div>
+</div>
+</body>
+</html>

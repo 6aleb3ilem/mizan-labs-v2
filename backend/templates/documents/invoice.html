@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="{{ document.locale }}">
+<head><meta charset="utf-8"><title>{{ document.number }}</title></head>
+<body>
+{% include "_frame_header.html" %}
+{% set fr = document.locale == 'fr' %}
+<div class="doc-title"><h1>{{ "Facture" if fr else "Invoice" }}</h1><div class="number">{{ document.number }}</div></div>
+<div class="grid-2">
+  <div class="box"><strong>{{ account.legal_name }}</strong><br>{{ account.tax_id or "" }}<br>{{ account.address or "" }}</div>
+  <div class="box">
+    <div><span class="muted">Date</span> {{ document.issued_at | date(document.locale) }}</div>
+    <div><span class="muted">{{ "Échéance" if fr else "Due date" }}</span> {{ invoice.due_date | date(document.locale) }}</div>
+    {% if project %}<div><span class="muted">{{ "Projet" if fr else "Project" }}</span> {{ project.number }} — {{ project.title }}</div>{% endif %}
+    {% if invoice.order_number %}<div><span class="muted">{{ "Commande" if fr else "Order" }}</span> {{ invoice.order_number }}</div>{% endif %}
+  </div>
+</div>
+<table style="margin-top:4mm">
+  <thead><tr><th>{{ "Désignation" if fr else "Description" }}</th><th class="num">{{ "Qté" if fr else "Qty" }}</th><th class="num">{{ "P.U." if fr else "Unit price" }}</th><th class="num">{{ "TVA" if fr else "VAT" }}</th><th class="num">Total</th></tr></thead>
+  <tbody>{% for line in invoice.lines %}<tr><td>{{ line.description }}</td><td class="num">{{ line.quantity | number(0, document.locale) }}</td><td class="num">{{ line.unit_price | money("", document.locale) }}</td><td class="num">{{ line.tax_rate }} %</td><td class="num">{{ line.line_total | money("", document.locale) }}</td></tr>{% endfor %}</tbody>
+</table>
+<table class="totals" style="width:70mm; margin-left:auto; margin-top:3mm">
+  <tr><td>{{ "Sous-total" if fr else "Subtotal" }}</td><td class="num">{{ invoice.subtotal | money(invoice.currency, document.locale) }}</td></tr>
+  <tr><td>{{ "TVA" if fr else "VAT" }}</td><td class="num">{{ invoice.tax | money(invoice.currency, document.locale) }}</td></tr>
+  <tr class="total"><td>Total</td><td class="num">{{ invoice.total | money(invoice.currency, document.locale) }}</td></tr>
+</table>
+{% if invoice.total_in_words %}<p class="note">{{ "Arrêté à la somme de" if fr else "Amount in words" }} : {{ invoice.total_in_words }}</p>{% endif %}
+<h2>{{ "Règlement" if fr else "Payment" }}</h2>
+<p>{{ invoice.payment_terms or "" }}</p>
+{% for acc in invoice.bank_accounts %}<p><strong>{{ acc.label }}</strong> {{ acc.bank_name }} · IBAN {{ acc.iban }} {% if acc.bic %}· BIC {{ acc.bic }}{% endif %}</p>{% endfor %}
+{% if branch.legal_texts.invoice %}<p class="note">{{ branch.legal_texts.invoice }}</p>{% endif %}
+</body>
+</html>
