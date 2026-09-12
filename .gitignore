@@ -31,3 +31,7 @@ infra/terraform/**/*.tfvars
 .idea/
 .vscode/
 *.log
+
+# Playwright
+frontend/e2e/test-results/
+frontend/e2e/playwright-report/

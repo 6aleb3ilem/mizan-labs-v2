@@ -8,7 +8,7 @@ UV ?= uv
 BACKEND := backend
 COMPOSE := docker compose -f docker-compose.dev.yml
 
-.PHONY: help setup dev api worker web test test-backend test-frontend lint lint-backend lint-frontend fmt build migrate makemigrations seed e2e db-up db-down openapi clean
+.PHONY: storybook help setup dev api worker web test test-backend test-frontend lint lint-backend lint-frontend fmt build migrate makemigrations seed e2e db-up db-down openapi clean
 
 help: ## Show this help
 > @grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -63,6 +63,9 @@ lint-frontend: ## eslint and tsc across the workspace
 fmt: ## Format backend code
 > cd $(BACKEND) && $(UV) run ruff format . && $(UV) run ruff check --fix .
 
+storybook: ## Open the design system in Storybook
+> pnpm --filter @mizan/ui storybook
+
 openapi: ## Export the OpenAPI document and regenerate the TypeScript client
 > cd $(BACKEND) && $(UV) run python manage.py export_openapi ../frontend/packages/api-client/src/generated/openapi.json
 > pnpm --filter @mizan/api-client generate
@@ -71,8 +74,8 @@ build: ## Build the container image and the front-end bundles
 > docker build -t mizan-labs/platform:dev -f backend/Dockerfile .
 > pnpm turbo run build
 
-e2e: ## Run Playwright end-to-end tests
-> pnpm --filter @mizan/e2e test
+e2e: ## Run Playwright end-to-end tests against the built apps
+> pnpm turbo run build --filter='./frontend/apps/*' && pnpm --filter @mizan/e2e test
 
 clean: ## Remove caches and build outputs
 > rm -rf .turbo frontend/apps/*/dist frontend/packages/*/dist backend/.pytest_cache backend/.mypy_cache backend/.ruff_cache
