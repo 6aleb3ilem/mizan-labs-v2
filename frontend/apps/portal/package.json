@@ -1,0 +1,41 @@
+{
+  "name": "@mizan/portal",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Client portal: projects, quotes with OTP acceptance, reports, invoices, requests, account (SPEC \u00a724)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5175 --strictPort",
+    "build": "tsc -p tsconfig.json && vite build",
+    "preview": "vite preview --port 5175",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@mizan/api-client": "workspace:*",
+    "@mizan/app-kit": "workspace:*",
+    "@mizan/i18n": "workspace:*",
+    "@mizan/tokens": "workspace:*",
+    "@mizan/ui": "workspace:*",
+    "@tanstack/react-query": "^5.102.8",
+    "@tanstack/react-router": "^1.170.35",
+    "lucide-react": "^1.45.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@mizan/config": "workspace:*",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^30.0.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.0"
+  }
+}

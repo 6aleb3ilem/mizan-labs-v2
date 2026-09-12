@@ -1,0 +1,1 @@
+{ "extends": "@mizan/config/tsconfig.json", "include": ["src"] }

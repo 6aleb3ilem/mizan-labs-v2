@@ -1,0 +1,33 @@
+{
+  "name": "@mizan/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Typed API client generated from the OpenAPI document: auth with refresh rotation, problem details, SSE, React Query helpers",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx",
+    "./schema": "./src/generated/schema.d.ts"
+  },
+  "scripts": {
+    "generate": "openapi-typescript src/generated/openapi.json -o src/generated/schema.d.ts --alphabetize --root-types",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.102.8",
+    "openapi-fetch": "^0.17.0"
+  },
+  "devDependencies": {
+    "@mizan/config": "workspace:*",
+    "@types/react": "^19.3.0",
+    "openapi-typescript": "^7.13.0",
+    "react": "^19.3.0",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

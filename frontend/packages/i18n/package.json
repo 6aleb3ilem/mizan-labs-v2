@@ -1,0 +1,31 @@
+{
+  "name": "@mizan/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "description": "i18next setup, FR/EN resources and locale-aware formatters (SPEC §21.7)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./locales/fr": "./src/locales/fr.json",
+    "./locales/en": "./src/locales/en.json"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "i18next": "^26.4.2",
+    "react-i18next": "^17.0.13"
+  },
+  "devDependencies": {
+    "@mizan/config": "workspace:*",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.0",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

@@ -1,0 +1,51 @@
+/* Default theme (SPEC §21.2) as CSS custom properties; JS `applyTheme` overrides the primary. */
+:root {
+  --mz-bg-canvas: #f6f7f9;
+  --mz-bg-surface: #ffffff;
+  --mz-bg-subtle: #eef1f5;
+  --mz-border-default: #d9dee7;
+  --mz-text-primary: #111827;
+  --mz-text-secondary: #5b6472;
+  --mz-text-inverse: #ffffff;
+  --mz-primary: #1f5eff;
+  --mz-primary-hover: #0f4df0;
+  --mz-primary-subtle: #edf2ff;
+  --mz-primary-on: #ffffff;
+  --mz-success: #12805c;
+  --mz-warning: #b26b00;
+  --mz-danger: #c62828;
+  --mz-info: #0e7490;
+  --mz-focus-ring: #1f5eff66;
+  --mz-radius-control: 6px;
+  --mz-radius-card: 10px;
+  --mz-radius-dialog: 14px;
+  --mz-shadow-1: 0 1px 2px rgba(17, 24, 39, 0.06), 0 1px 1px rgba(17, 24, 39, 0.04);
+  --mz-shadow-2: 0 2px 6px rgba(17, 24, 39, 0.08), 0 1px 2px rgba(17, 24, 39, 0.05);
+  --mz-shadow-3: 0 8px 24px rgba(17, 24, 39, 0.12), 0 2px 6px rgba(17, 24, 39, 0.06);
+  --mz-font-ui: "Inter", "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --mz-bg-canvas: #0b1220;
+  --mz-bg-surface: #111a2e;
+  --mz-bg-subtle: #182238;
+  --mz-border-default: #26324a;
+  --mz-text-primary: #e5e9f0;
+  --mz-text-secondary: #9aa5b5;
+  --mz-text-inverse: #0b1220;
+  --mz-primary: #6d94ff;
+  --mz-primary-hover: #86a6ff;
+  --mz-primary-subtle: #1b2540;
+  --mz-primary-on: #0b1220;
+  --mz-success: #3ccb93;
+  --mz-warning: #f5b342;
+  --mz-danger: #ff6b6b;
+  --mz-info: #4fd1e5;
+  --mz-focus-ring: #6d94ff66;
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

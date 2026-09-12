@@ -1,0 +1,61 @@
+/* Tailwind v4 utilities bound to the design tokens (SPEC §21.2). Import once per app. */
+@import "tailwindcss";
+@import "@mizan/tokens/tokens.css";
+
+@theme inline {
+  --color-canvas: var(--mz-bg-canvas);
+  --color-surface: var(--mz-bg-surface);
+  --color-subtle: var(--mz-bg-subtle);
+  --color-line: var(--mz-border-default);
+  --color-primary: var(--mz-primary);
+  --color-primary-hover: var(--mz-primary-hover);
+  --color-primary-subtle: var(--mz-primary-subtle);
+  --color-primary-on: var(--mz-primary-on);
+  --color-success: var(--mz-success);
+  --color-warning: var(--mz-warning);
+  --color-danger: var(--mz-danger);
+  --color-info: var(--mz-info);
+  --color-text: var(--mz-text-primary);
+  --color-muted: var(--mz-text-secondary);
+  --color-inverse: var(--mz-text-inverse);
+  --radius-control: var(--mz-radius-control);
+  --radius-card: var(--mz-radius-card);
+  --radius-dialog: var(--mz-radius-dialog);
+  --shadow-1: var(--mz-shadow-1);
+  --shadow-2: var(--mz-shadow-2);
+  --shadow-3: var(--mz-shadow-3);
+  --font-sans: var(--mz-font-ui);
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 30px;
+}
+
+@layer base {
+  html {
+    font-family: var(--mz-font-ui);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    margin: 0;
+    background: var(--mz-bg-canvas);
+    color: var(--mz-text-primary);
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+  :focus-visible {
+    outline: 2px solid var(--mz-focus-ring);
+    outline-offset: 2px;
+  }
+  @media print {
+    .no-print { display: none !important; }
+  }
+}
+
+@utility text-primary { color: var(--mz-text-primary); }
+@utility text-secondary { color: var(--mz-text-secondary); }
+@utility touch-target { min-height: 44px; min-width: 44px; }
