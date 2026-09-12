@@ -50,6 +50,19 @@ class Env(BaseSettings):
     email_host_password: str = ""
     email_from: str = "Mizan Labs <no-reply@mizanlabs.local>"
 
+    # Notification channels (SPEC §19.2). "log" providers only record the message (dev/test).
+    notify_email_provider: Literal["smtp", "log"] = "smtp"
+    notify_email_domain: str = "mizanlabs.local"
+    sms_provider: Literal["log", "http"] = "log"
+    sms_url: str | None = None  # local aggregator endpoint (POST JSON {to, text, sender})
+    sms_token: str | None = None
+    sms_sender: str = "MizanLabs"
+    whatsapp_provider: Literal["log", "cloud"] = "log"
+    whatsapp_phone_number_id: str | None = None
+    whatsapp_access_token: str | None = None
+    whatsapp_api_version: str = "v20.0"
+    whatsapp_free_text: bool = False  # True only inside a customer-service window
+
     # Document signing: local PEM keys in dev, cloud KMS handles elsewhere.
     signing_backend: Literal["local", "kms"] = "local"
     signing_local_dir: str = "var/keys"

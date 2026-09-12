@@ -40,6 +40,7 @@ def _register_app_routers() -> None:
     from mizan.apps.documents.api import router as documents_router
     from mizan.apps.documents.api import verify_router
     from mizan.apps.identity.api import router as identity_router
+    from mizan.apps.notify.api import router as notify_router
     from mizan.apps.org.api import router as org_router
 
     api.add_router("", identity_router)
@@ -48,6 +49,7 @@ def _register_app_routers() -> None:
     api.add_router("", documents_router)
     api.add_router("", verify_router)
     api.add_router("", audit_router)
+    api.add_router("", notify_router)
 
 
 _register_app_routers()

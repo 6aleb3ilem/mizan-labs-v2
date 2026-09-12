@@ -5,6 +5,7 @@ Django 5 + Django Ninja modular monolith. One package `mizan/` with:
 - `mizan/config` — settings (pydantic-settings), ASGI, URLs.
 - `mizan/platform` — cross-cutting infrastructure: tenancy and RLS, ids, authz primitives,
   events/outbox, tasks, storage, formula engine, telemetry.
+- `mizan/cli` — management commands needing the whole project (`export_openapi`, `scheduler_tick`, seeds)
 - `mizan/apps/*` — business apps (identity, org, config, crm, project, sales, lab, finance,
   assets, delivery, documents, notify, audit, analytics), each with `models.py`, `schemas.py`,
   `services.py`, `api.py`, `events.py`, `tasks.py`, `migrations/`, `tests/`.

@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     "mizan.apps.audit",
     "mizan.apps.config",
     "mizan.apps.documents",
+    "mizan.apps.notify",
+    "mizan.cli",
 ]
 
 MIDDLEWARE = [
@@ -211,6 +213,8 @@ LOGGING = {
 # Platform-level settings (SPEC §18, §27): public origins and signing.
 MIZAN_VERIFY_BASE_URL = env.verify_base_url
 MIZAN_PORTAL_BASE_URL = env.portal_base_url
+MIZAN_APP_BASE_URL = env.app_base_url
+MIZAN_ADMIN_BASE_URL = env.admin_base_url
 MIZAN_SIGNING_BACKEND = env.signing_backend
 MIZAN_SIGNING_LOCAL_DIR = BASE_DIR / env.signing_local_dir
 MIZAN_TSA_URL = env.tsa_url
@@ -220,3 +224,18 @@ MIZAN_JWT_ISSUER = env.jwt_issuer
 MIZAN_JWT_ACCESS_TTL = env.jwt_access_ttl_seconds
 MIZAN_JWT_REFRESH_TTL = env.jwt_refresh_ttl_seconds
 MIZAN_IDEMPOTENCY_TTL_SECONDS = 24 * 3600
+
+# Notification channels (SPEC §19.2): providers are "log" in dev/test, real adapters elsewhere.
+MIZAN_NOTIFY: dict[str, object] = {
+    "email_provider": env.notify_email_provider,
+    "email_domain": env.notify_email_domain,
+    "sms_provider": env.sms_provider,
+    "sms_url": env.sms_url,
+    "sms_token": env.sms_token,
+    "sms_sender": env.sms_sender,
+    "whatsapp_provider": env.whatsapp_provider,
+    "whatsapp_phone_number_id": env.whatsapp_phone_number_id,
+    "whatsapp_access_token": env.whatsapp_access_token,
+    "whatsapp_api_version": env.whatsapp_api_version,
+    "whatsapp_free_text": env.whatsapp_free_text,
+}

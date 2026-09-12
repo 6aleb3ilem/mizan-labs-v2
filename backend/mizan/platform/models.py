@@ -69,3 +69,19 @@ class IdempotencyKey(models.Model):
 
     def __str__(self) -> str:
         return f"{self.key} ({self.status_code})"
+
+
+class PeriodicJobRun(models.Model):
+    """Last run of each registered periodic job (``mizan.platform.scheduler``)."""
+
+    name = models.CharField(max_length=120, primary_key=True)
+    last_started_at = models.DateTimeField(null=True, blank=True)
+    last_finished_at = models.DateTimeField(null=True, blank=True)
+    last_error = models.TextField(blank=True, default="")
+    failures = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = "periodic_job_run"
+
+    def __str__(self) -> str:
+        return self.name
