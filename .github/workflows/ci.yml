@@ -91,3 +91,16 @@ jobs:
           tags: mizan-labs/platform:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  infra:
+    name: Infrastructure (terraform fmt, validate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.*"
+      - run: terraform fmt -check -recursive
+        working-directory: infra/terraform
+      - run: terraform init -backend=false -input=false && terraform validate
+        working-directory: infra/terraform

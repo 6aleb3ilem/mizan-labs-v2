@@ -1,0 +1,84 @@
+name: Deploy
+
+# Build → push → terraform apply (image, 10 % canary) → migrations job → checks → 100 % (SPEC Appendix Q, H).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: staging | production
+        default: staging
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  REGION: europe-west1
+
+jobs:
+  image:
+    name: Build and push image
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      - id: meta
+        run: echo "image=${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mizan/platform:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+      - run: docker build -t "${{ steps.meta.outputs.image }}" -f backend/Dockerfile .
+      - run: docker push "${{ steps.meta.outputs.image }}"
+
+  deploy:
+    name: Deploy ${{ github.event.inputs.environment || 'staging' }}
+    needs: image
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'staging' }}
+    env:
+      TF_VAR_image: ${{ needs.image.outputs.image }}
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_r2_access_key_id: ${{ secrets.R2_ACCESS_KEY_ID }}
+      TF_VAR_r2_secret_access_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      TF_VAR_smtp_password: ${{ secrets.SMTP_PASSWORD }}
+      ENVIRONMENT: ${{ github.event.inputs.environment || 'staging' }}
+    defaults:
+      run:
+        working-directory: infra/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.*"
+      - run: terraform init -input=false -backend-config="environments/${ENVIRONMENT}.backend.hcl"
+      - name: Canary revision (10 % traffic)
+        run: terraform apply -input=false -auto-approve -var-file="environments/${ENVIRONMENT}.tfvars" -var canary_percent=10
+      - name: Migrations job
+        run: gcloud run jobs execute "lims-${ENVIRONMENT}-migrate" --region "${REGION}" --wait
+      - name: Readiness check
+        run: |
+          API_URL=$(terraform output -raw api_url)
+          for i in 1 2 3 4 5 6; do curl -fsS "${API_URL}/ready" && break || sleep 10; done
+      - name: k6 smoke on the canary
+        uses: grafana/setup-k6-action@v1
+      - run: k6 run -e BASE_URL="$(terraform output -raw api_url)/api/v1" -e EMAIL="${{ secrets.SMOKE_EMAIL }}" -e PASSWORD="${{ secrets.SMOKE_PASSWORD }}" -e TENANT="${{ secrets.SMOKE_TENANT }}" ../k6/smoke.js
+        working-directory: infra/terraform
+      - name: Promote to 100 %
+        run: terraform apply -input=false -auto-approve -var-file="environments/${ENVIRONMENT}.tfvars" -var canary_percent=100
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          gcloud run services update-traffic "lims-${ENVIRONMENT}-api" --region "${REGION}" --to-revisions LATEST=0 || true
+          echo "Traffic kept on the previous revision; see infra/runbooks/rollback.md"

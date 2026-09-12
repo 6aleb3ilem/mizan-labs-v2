@@ -1,0 +1,11 @@
+project_id            = "mizan-labs-staging"
+region                = "europe-west1"
+environment           = "staging"
+image                 = "europe-west1-docker.pkg.dev/mizan-labs-staging/mizan/platform:latest"
+domain                = "staging.mizanlabs.example"
+cloudflare_account_id = "0000000000000000"
+cloudflare_zone_id    = "0000000000000000"
+r2_endpoint           = "https://0000000000000000.r2.cloudflarestorage.com"
+db_tier               = "db-custom-1-3840"
+api_min_instances     = 0
+worker_min_instances  = 1
