@@ -2,6 +2,20 @@
 @import "tailwindcss";
 @import "@mizan/tokens/tokens.css";
 
+/*
+ * Where Tailwind looks for class names.
+ *
+ * v4 detects sources relative to this file and skips anything under `node_modules`. The apps
+ * import this sheet as `@mizan/ui/styles.css`, which resolves through the workspace symlink, so
+ * detection lands inside `node_modules` and silently scans nothing — utilities used by the
+ * design system and by the applications are then never generated, and components render with
+ * their layout classes missing. Naming every source directory explicitly is what makes the
+ * stylesheet complete regardless of how it was resolved.
+ */
+@source ".";
+@source "../../app-kit/src";
+@source "../../../apps";
+
 @theme inline {
   --color-canvas: var(--mz-bg-canvas);
   --color-surface: var(--mz-bg-surface);

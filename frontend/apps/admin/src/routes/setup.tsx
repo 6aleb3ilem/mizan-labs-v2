@@ -162,8 +162,11 @@ export function SetupWizardPage() {
   }, [branch, departments.data, schemes.data, signatories.data, paymentTerms.data, priceLists.data, services.data, units.data, t]);
 
   const doneCount = steps.filter((step) => step.done).length;
-  // The first unfinished step is where the wizard points; the rest stay visible as context.
-  const currentIndex = Math.max(0, steps.findIndex((step) => !step.done));
+  /* The first unfinished step is where the wizard points; the rest stay visible as context. When
+     none are left, `current` sits past the end so the stepper shows every step complete rather
+     than marking step one as the one to do. */
+  const firstTodo = steps.findIndex((step) => !step.done);
+  const currentIndex = firstTodo === -1 ? steps.length : firstTodo;
 
   return (
     <div className="flex flex-col gap-4">
@@ -220,7 +223,7 @@ export function SetupWizardPage() {
           {doneCount === steps.length && (
             <Card>
               <div className="flex items-center justify-between gap-4">
-                <p className="text-base">{t("common.saved")}</p>
+                <p className="text-base">{t("setup.complete")}</p>
                 <Link to="/" className="shrink-0">
                   <Button variant="outline">{t("common.finish")}</Button>
                 </Link>

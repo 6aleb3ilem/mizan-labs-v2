@@ -436,5 +436,9 @@
     "hint": "Immutable log of every write. Filter by resource or by actor.",
     "no_changes": "No field changed.",
     "system_actor": "System"
+  },
+  "setup": {
+    "complete": "The branch is ready: you can create clients, quotes and intakes.",
+    "step_done": "Configured"
   }
 }

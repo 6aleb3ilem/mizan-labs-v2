@@ -436,5 +436,9 @@
     "hint": "Journal immuable de toutes les écritures. Filtrez par ressource ou par auteur.",
     "no_changes": "Aucun champ modifié.",
     "system_actor": "Système"
+  },
+  "setup": {
+    "complete": "L'agence est prête : vous pouvez créer des clients, des devis et des réceptions.",
+    "step_done": "Configuré"
   }
 }
