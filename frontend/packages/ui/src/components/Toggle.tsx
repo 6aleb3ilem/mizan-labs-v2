@@ -22,9 +22,9 @@ export function Checkbox({ checked, onCheckedChange, label, disabled, id, classN
       onCheckedChange={(v) => onCheckedChange(v === true)}
       disabled={disabled}
       aria-label={aria["aria-label"]}
-      className={cn("flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-line bg-surface data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-on data-[state=indeterminate]:bg-primary disabled:opacity-50", className)}
+      className={cn("flex size-4 shrink-0 items-center justify-center rounded-[4px] border border-line bg-surface press transition-[background-color,border-color] duration-[var(--mz-duration-fast)] data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-on data-[state=indeterminate]:bg-primary disabled:opacity-50", className)}
     >
-      <RadixCheckbox.Indicator>
+      <RadixCheckbox.Indicator className="animate-[mz-scale-in_var(--mz-duration-fast)_var(--mz-ease-out)]">
         {checked === "indeterminate" ? <span className="block h-0.5 w-2 bg-primary-on" /> : <Check className="size-3" aria-hidden />}
       </RadixCheckbox.Indicator>
     </RadixCheckbox.Root>
@@ -48,9 +48,10 @@ export function Switch({ checked, onCheckedChange, label, disabled, id, ...aria 
       onCheckedChange={onCheckedChange}
       disabled={disabled}
       aria-label={aria["aria-label"]}
-      className="relative h-5 w-9 shrink-0 rounded-full bg-line transition-colors data-[state=checked]:bg-primary disabled:opacity-50"
+      className="relative h-5 w-9 shrink-0 rounded-full bg-line transition-colors duration-[var(--mz-duration-fast)] ease-out data-[state=checked]:bg-primary disabled:opacity-50"
     >
-      <RadixSwitch.Thumb className="block size-4 translate-x-0.5 rounded-full bg-white shadow-1 transition-transform data-[state=checked]:translate-x-[18px]" />
+      <RadixSwitch.Thumb // The thumb overshoots very slightly on the spring curve, the way a physical switch does.
+      className="block size-4 translate-x-0.5 rounded-full bg-white shadow-1 transition-transform duration-[var(--mz-duration-base)] ease-spring data-[state=checked]:translate-x-[18px]" />
     </RadixSwitch.Root>
   );
   if (!label) return control;

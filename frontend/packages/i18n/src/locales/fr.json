@@ -132,20 +132,37 @@
       "account_disabled": "Ce compte est désactivé.",
       "tenant_required": "Précisez le code société."
     },
-    "authz": { "forbidden": "Vous n'avez pas la permission d'effectuer cette action." },
-    "verify": { "not_found": "Aucun document ne correspond à ce code." },
+    "authz": {
+      "forbidden": "Vous n'avez pas la permission d'effectuer cette action."
+    },
+    "verify": {
+      "not_found": "Aucun document ne correspond à ce code."
+    },
     "workflow": {
       "not_draft": "Seule une version brouillon peut être modifiée.",
       "unknown_kind": "Type de workflow inconnu.",
       "duplicate_state_code": "Deux états portent le même code."
     },
     "documents": {
-      "template": { "exists": "Un modèle existe déjà pour ce type et cette langue.", "invalid": "Le modèle contient une erreur.", "render_failed": "Le rendu du modèle a échoué." }
+      "template": {
+        "exists": "Un modèle existe déjà pour ce type et cette langue.",
+        "invalid": "Le modèle contient une erreur.",
+        "render_failed": "Le rendu du modèle a échoué."
+      }
     },
     "notify": {
-      "rule": { "invalid": "La règle est invalide.", "exists": "Une règle porte déjà ce code." },
-      "template": { "invalid": "Le modèle de message contient une erreur.", "exists": "Un modèle existe déjà pour ce code, cette langue et ce canal.", "unknown_channel": "Canal inconnu." },
-      "delivery": { "not_retryable": "Seuls les envois échoués ou ignorés peuvent être relancés." }
+      "rule": {
+        "invalid": "La règle est invalide.",
+        "exists": "Une règle porte déjà ce code."
+      },
+      "template": {
+        "invalid": "Le modèle de message contient une erreur.",
+        "exists": "Un modèle existe déjà pour ce code, cette langue et ce canal.",
+        "unknown_channel": "Canal inconnu."
+      },
+      "delivery": {
+        "not_retryable": "Seuls les envois échoués ou ignorés peuvent être relancés."
+      }
     }
   },
   "nav": {
@@ -289,5 +306,135 @@
     "install": "Installer l'application",
     "keys_cached": "Clés en cache : {{count}}",
     "refresh_keys": "Actualiser les clés"
+  },
+  "org": {
+    "tenant_profile": "Profil de la société",
+    "tenant_hint": "Nom commercial et image de marque appliqués aux applications et aux documents.",
+    "plan": "Formule",
+    "status": "Statut",
+    "brand_colour": "Couleur de marque",
+    "brand_colour_help": "Utilisée pour les actions et les accents. Éclaircie automatiquement si le contraste est insuffisant.",
+    "branch": "Agence",
+    "branches_hint": "Chaque agence a sa numérotation, ses signataires et ses comptes.",
+    "legal_name": "Raison sociale",
+    "trade_name": "Nom commercial",
+    "identifiers": "Identifiants légaux",
+    "identifiers_help": "NIF, RC, patente… un identifiant par ligne, au format clé = valeur.",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "timezone": "Fuseau horaire",
+    "locales": "Langues",
+    "default_locale": "Langue par défaut",
+    "rounding": "Arrondi",
+    "working_days": "Jours ouvrés",
+    "holidays": "Jours fériés",
+    "holidays_help": "Une date ISO par ligne (2026-01-01).",
+    "legal_texts": "Mentions légales",
+    "legal_texts_help": "Textes repris en pied des documents émis.",
+    "department": "Département",
+    "colour": "Couleur",
+    "order": "Ordre",
+    "signatory": "Signataire",
+    "signatory_title": "Fonction",
+    "document_kinds": "Types de documents",
+    "document_kinds_help": "Vide = tous les documents de l'agence.",
+    "signature_mode": "Mode de signature",
+    "signing_order": "Ordre de signature",
+    "requires_step_up": "Exiger une re-authentification",
+    "certificate_ref": "Référence du certificat",
+    "esign_provider": "Fournisseur de signature",
+    "linked_user": "Utilisateur lié",
+    "signature_image": "Image de signature",
+    "stamp_image": "Cachet",
+    "account_type": "Type de compte",
+    "bank_name": "Banque",
+    "iban": "IBAN",
+    "bic": "BIC",
+    "printed_on_invoices": "Imprimé sur les factures",
+    "monday": "Lun",
+    "tuesday": "Mar",
+    "wednesday": "Mer",
+    "thursday": "Jeu",
+    "friday": "Ven",
+    "saturday": "Sam",
+    "sunday": "Dim"
+  },
+  "access": {
+    "realm": "Domaine",
+    "display_name": "Nom affiché",
+    "last_login": "Dernière connexion",
+    "never": "Jamais",
+    "invite": "Créer et inviter",
+    "temporary_password": "Mot de passe temporaire",
+    "temporary_password_help": "Au moins 10 caractères. L'utilisateur devra le changer à la première connexion.",
+    "force_password_change": "Changement du mot de passe requis",
+    "reset_password": "Réinitialiser le mot de passe",
+    "disable": "Désactiver",
+    "enable": "Réactiver",
+    "membership": "Affectation",
+    "member": "Utilisateur",
+    "role": "Rôle",
+    "all_branches": "Toutes les agences",
+    "scope": "Portée",
+    "revoke": "Retirer",
+    "revoke_confirm": "Retirer cette affectation ?",
+    "revoke_consequences": "L'utilisateur perdra immédiatement les permissions de ce rôle sur cette agence.",
+    "builtin": "Intégré",
+    "builtin_hint": "Les rôles intégrés ne sont pas modifiables : dupliquez-en un pour l'adapter.",
+    "duplicate": "Dupliquer",
+    "duplicate_of": "Copie de {{name}}",
+    "permissions": "Permissions",
+    "resource": "Ressource",
+    "action": "Action",
+    "granted": "Accordée",
+    "scope_all": "Tout",
+    "scope_branch": "Agence",
+    "scope_department": "Département",
+    "scope_own": "Les siens",
+    "matrix_hint": "Cochez une action pour l'accorder, puis choisissez sa portée. Les modifications sont enregistrées en bloc.",
+    "view_as": "Voir comme",
+    "view_as_hint": "Prévisualisez l'interface avec les permissions d'un rôle, sans changer de compte.",
+    "effective_permissions": "Permissions effectives"
+  },
+  "numbering": {
+    "scheme": "Schéma",
+    "kind": "Type de document",
+    "pattern": "Format",
+    "pattern_help": "Jetons disponibles : {BRANCH} {YYYY} {YY} {MM} {SEQ:n}. Exemple : DEV-{BRANCH}-{YYYY}-{SEQ:4}.",
+    "reset_policy": "Remise à zéro",
+    "reset_never": "Jamais",
+    "reset_yearly": "Chaque année",
+    "reset_monthly": "Chaque mois",
+    "preview": "Aperçu",
+    "next_value": "Prochaine valeur",
+    "activate": "Activer",
+    "activate_confirm": "Activer ce schéma ?",
+    "activate_consequences": "Les documents émis à partir de maintenant utiliseront ce format. Les numéros déjà attribués ne changent pas.",
+    "gapless": "Sans rupture",
+    "gapless_help": "Obligatoire pour les factures : la séquence ne doit comporter aucun trou.",
+    "draft": "Brouillon",
+    "active": "Actif",
+    "superseded": "Remplacé"
+  },
+  "vocab": {
+    "kind": "Vocabulaire",
+    "entries": "Entrées",
+    "entry": "Entrée",
+    "hint": "Listes de valeurs utilisées dans les formulaires. Le code ne change plus une fois l'entrée utilisée.",
+    "system": "Système",
+    "system_hint": "Entrée système : le libellé est modifiable, pas le code."
+  },
+  "audit": {
+    "actor": "Auteur",
+    "action": "Action",
+    "resource": "Ressource",
+    "at": "Horodatage",
+    "changes": "Modifications",
+    "before": "Avant",
+    "after": "Après",
+    "hint": "Journal immuable de toutes les écritures. Filtrez par ressource ou par auteur.",
+    "no_changes": "Aucun champ modifié.",
+    "system_actor": "Système"
   }
 }

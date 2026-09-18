@@ -815,6 +815,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/permission-catalogue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Resources, actions, scopes and field groups (for the permission matrix)
+         * @description The system semantics the matrix editor draws its axes from (SPEC §9.2, §23.2).
+         *
+         *     Tier-1 vocabulary: it cannot be configured, so the console must read it from the server
+         *     rather than hold its own copy that drifts from ``validate_grant``.
+         */
+        get: operations["mizan_apps_identity_api_permission_catalogue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/platform/tenants": {
         parameters: {
             query?: never;
@@ -5796,6 +5819,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": string[];
+                };
+            };
+        };
+    };
+    mizan_apps_identity_api_permission_catalogue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };

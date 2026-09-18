@@ -48,7 +48,7 @@ export function Tabs({ value, onValueChange, items, children, className }: { val
             key={item.value}
             value={item.value}
             disabled={item.disabled}
-            className="-mb-px flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-base text-muted hover:text-text data-[state=active]:border-primary data-[state=active]:text-text disabled:opacity-50"
+            className="-mb-px flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-3 py-2 text-base text-muted hover-colors hover:text-text data-[state=active]:border-primary data-[state=active]:text-text disabled:opacity-50"
           >
             {item.label}
             {item.badge !== undefined && <span className="rounded-full bg-subtle px-1.5 text-xs">{item.badge}</span>}

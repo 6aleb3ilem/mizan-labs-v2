@@ -41,10 +41,10 @@ export function Select({ value, onValueChange, options, placeholder, disabled, i
         </RadixSelect.Icon>
       </RadixSelect.Trigger>
       <RadixSelect.Portal>
-        <RadixSelect.Content position="popper" sideOffset={4} className="z-50 max-h-72 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-card border border-line bg-surface shadow-3">
+        <RadixSelect.Content position="popper" sideOffset={4} className="mz-pop z-50 max-h-72 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-card border border-line bg-surface shadow-3">
           <RadixSelect.Viewport className="p-1">
             {allowEmpty && (
-              <RadixSelect.Item value={EMPTY} className="relative flex cursor-default select-none items-center rounded-control py-1.5 pl-7 pr-2 text-base text-muted outline-none data-[highlighted]:bg-subtle">
+              <RadixSelect.Item value={EMPTY} className="relative flex cursor-default select-none items-center rounded-xs py-1.5 pl-7 pr-2 text-base text-muted outline-none transition-colors duration-[var(--mz-duration-instant)] data-[highlighted]:bg-subtle">
                 <RadixSelect.ItemText>{emptyLabel ?? "—"}</RadixSelect.ItemText>
               </RadixSelect.Item>
             )}
@@ -53,7 +53,7 @@ export function Select({ value, onValueChange, options, placeholder, disabled, i
                 key={option.value}
                 value={option.value}
                 disabled={option.disabled}
-                className="relative flex cursor-default select-none items-center rounded-control py-1.5 pl-7 pr-2 text-base outline-none data-[highlighted]:bg-subtle data-[disabled]:opacity-50"
+                className="relative flex cursor-default select-none items-center rounded-xs py-1.5 pl-7 pr-2 text-base outline-none transition-colors duration-[var(--mz-duration-instant)] data-[highlighted]:bg-subtle data-[disabled]:opacity-50"
               >
                 <RadixSelect.ItemIndicator className="absolute left-2">
                   <Check className="size-4" aria-hidden />
