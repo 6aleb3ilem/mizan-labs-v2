@@ -39,7 +39,7 @@ import {
 import { RefreshCw, Send } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { ListPage, RecordDrawer, useList, useSave, textOf } from "../lib/resource";
+import { ListPage, RecordDrawer, parseJsonObject, useList, useSave, textOf } from "../lib/resource";
 
 type Rule = {
   id: string;
@@ -116,16 +116,6 @@ function audienceToLines(audience: Record<string, unknown>): string {
   return Object.entries(audience ?? {})
     .map(([key, value]) => `${key} = ${Array.isArray(value) ? value.join(", ") : String(value)}`)
     .join("\n");
-}
-
-/** Sample payloads are typed by hand, so invalid JSON is expected rather than exceptional. */
-function parseJson(text: string): Record<string, unknown> | null {
-  try {
-    const value: unknown = JSON.parse(text.trim() || "{}");
-    return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
-  } catch {
-    return null;
-  }
 }
 
 function linesToAudience(text: string): Record<string, string[]> {
@@ -363,7 +353,7 @@ function SimulateDrawer({ rule, onClose }: { rule: Rule | null; onClose: () => v
 
   const simulate = useSave(
     async () => {
-      const parsed = parseJson(payload);
+      const parsed = parseJsonObject(payload);
       if (!parsed) {
         setError("JSON");
         return undefined;
@@ -443,7 +433,7 @@ export function MessageTemplatesPage() {
 
   const save = useSave(
     async () => {
-      const sample = parseJson(form.sample) ?? {};
+      const sample = parseJsonObject(form.sample) ?? {};
       if (editing) {
         return (await api.client.PATCH("/message-templates/{template_id}", {
           params: { path: { template_id: editing.id } },
@@ -462,7 +452,7 @@ export function MessageTemplatesPage() {
   );
 
   const render = useSave(async () => {
-    const sample = parseJson(form.sample) ?? {};
+    const sample = parseJsonObject(form.sample) ?? {};
     const response = await api.client.POST("/message-templates:preview", {
       body: { subject: form.subject, body: form.body, html: form.html, channel: form.channel, sample } as never,
     });

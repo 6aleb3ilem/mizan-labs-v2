@@ -28,6 +28,21 @@ export function useSave<TVars, TResult>(mutate: (vars: TVars) => Promise<TResult
   return { ...mutation, fieldErrors, setFieldErrors };
 }
 
+/**
+ * Parse a JSON object typed by hand into a form field.
+ *
+ * Invalid JSON is an ordinary state here, not an exception: the user is mid-keystroke most of
+ * the time. Returns null so callers can tell "not valid yet" from "valid and empty".
+ */
+export function parseJsonObject(text: string): Record<string, unknown> | null {
+  try {
+    const value: unknown = JSON.parse(text.trim() || "{}");
+    return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function textOf(value: unknown): string {
   if (value === null || value === undefined) return "";
   if (typeof value === "object") return JSON.stringify(value);
