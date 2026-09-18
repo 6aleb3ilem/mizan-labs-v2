@@ -1,8 +1,8 @@
 import { useOnline } from "@mizan/app-kit";
 import { useTranslation, setLocale, currentLocale } from "@mizan/i18n";
-import { Button, cn } from "@mizan/ui";
+import { Button, Logo, cn } from "@mizan/ui";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ShieldCheck, WifiOff } from "lucide-react";
+import { WifiOff } from "lucide-react";
 import type { ReactNode } from "react";
 
 export function VerifyShell({ children }: { children: ReactNode }) {
@@ -19,13 +19,12 @@ export function VerifyShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-dvh flex-col bg-canvas">
       <header className="border-b border-line bg-surface">
         <div className="mx-auto flex h-14 w-full max-w-3xl items-center gap-4 px-4">
-          <Link to="/" className="flex items-center gap-2 text-md font-semibold">
-            <ShieldCheck className="size-5 text-primary" aria-hidden />
-            {t("common.app_name")}
+          <Link to="/" className="flex items-center rounded-control press">
+            <Logo size={24} label={t("common.app_name")} />
           </Link>
           <nav aria-label="Main" className="ml-auto flex items-center gap-1 overflow-x-auto">
             {links.map((link) => (
-              <Link key={link.to} to={link.to} className={cn("rounded-control px-2 py-1 text-sm text-muted hover:text-text", pathname === link.to && "bg-subtle text-text")} aria-current={pathname === link.to ? "page" : undefined}>
+              <Link key={link.to} to={link.to} className={cn("rounded-control px-2 py-1 text-sm text-muted hover-colors hover:text-text", pathname === link.to && "bg-subtle text-text")} aria-current={pathname === link.to ? "page" : undefined}>
                 {link.label}
               </Link>
             ))}

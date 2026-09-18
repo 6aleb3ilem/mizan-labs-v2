@@ -31,6 +31,7 @@ from mizan.platform.api.errors import NotFound, Unauthorized
 from mizan.platform.api.idempotency import idempotent
 from mizan.platform.api.pagination import CursorParams, Page, paginate
 from mizan.platform.api.schemas import OkSchema
+from mizan.platform.authz import catalog
 from mizan.platform.middleware import client_ip
 
 router = Router(tags=["identity"])
@@ -280,6 +281,30 @@ def _role_out(role: Role) -> dict[str, Any]:
             for g in role.grants.all()
         ],
         "memberships_count": role.memberships.count(),
+    }
+
+
+@router.get(
+    "/permission-catalogue",
+    response=dict[str, Any],
+    summary="Resources, actions, scopes and field groups (for the permission matrix)",
+)
+@requires("role", "view")
+def permission_catalogue(request: HttpRequest) -> dict[str, Any]:
+    """The system semantics the matrix editor draws its axes from (SPEC §9.2, §23.2).
+
+    Tier-1 vocabulary: it cannot be configured, so the console must read it from the server
+    rather than hold its own copy that drifts from ``validate_grant``.
+    """
+    return {
+        "resources": sorted(catalog.RESOURCES),
+        "actions": sorted(catalog.ACTIONS),
+        "scopes": list(catalog.SCOPES),
+        "field_groups": {
+            resource: sorted(groups) for resource, groups in catalog.FIELD_GROUPS.items()
+        },
+        "configuration_resources": sorted(catalog.CONFIGURATION_RESOURCES),
+        "step_up_actions": sorted(catalog.STEP_UP_ACTIONS),
     }
 
 

@@ -50,7 +50,7 @@ class RulePatch(Schema):
     description: str | None = None
 
 
-class SimulateIn(Schema):
+class NotificationSimulateIn(Schema):
     payload: dict[str, Any] = {}
     branch_id: uuid.UUID | None = None
 

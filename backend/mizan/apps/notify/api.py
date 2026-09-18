@@ -24,6 +24,7 @@ from mizan.apps.notify.schemas import (
     MarkedOut,
     MarkReadIn,
     NotificationOut,
+    NotificationSimulateIn,
     PreferencesIn,
     PreferencesOut,
     RenderedOut,
@@ -31,7 +32,6 @@ from mizan.apps.notify.schemas import (
     RuleOut,
     RulePatch,
     SimulatedDeliveryOut,
-    SimulateIn,
     TemplateIn,
     TemplateOut,
     TemplatePatch,
@@ -122,7 +122,7 @@ def patch_rule(request: HttpRequest, rule_id: uuid.UUID, payload: RulePatch) -> 
 )
 @requires("notification_rule", "view")
 def simulate_rule(
-    request: HttpRequest, rule_id: uuid.UUID, payload: SimulateIn
+    request: HttpRequest, rule_id: uuid.UUID, payload: NotificationSimulateIn
 ) -> list[dict[str, Any]]:
     rule = _get(NotificationRule, rule_id)
     return services.simulate_rule(rule, payload.payload, branch_id=payload.branch_id)

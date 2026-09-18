@@ -1,51 +1,104 @@
 /* Default theme (SPEC §21.2) as CSS custom properties; JS `applyTheme` overrides the primary. */
 :root {
-  --mz-bg-canvas: #f6f7f9;
+  /* Brand — the logo mark. Raw orange is for the mark and large accents, never body text. */
+  --mz-brand-orange: #e9631a;
+  --mz-brand-aqua: #b2f0ef;
+  --mz-brand-ink: #0a0a0a;
+
+  /* Warm neutrals, so the brand does not sit on a cold grey. */
+  --mz-bg-canvas: #f7f6f4;
   --mz-bg-surface: #ffffff;
-  --mz-bg-subtle: #eef1f5;
-  --mz-border-default: #d9dee7;
-  --mz-text-primary: #111827;
-  --mz-text-secondary: #5b6472;
+  --mz-bg-subtle: #f0eeea;
+  --mz-border-default: #e0dcd5;
+  --mz-text-primary: #17140f;
+  --mz-text-secondary: #6b6259;
   --mz-text-inverse: #ffffff;
-  --mz-primary: #1f5eff;
-  --mz-primary-hover: #0f4df0;
-  --mz-primary-subtle: #edf2ff;
+  --mz-primary: #bf4e12;
+  --mz-primary-hover: #9a3f0e;
+  --mz-primary-subtle: #f9ece6;
   --mz-primary-on: #ffffff;
   --mz-success: #12805c;
   --mz-warning: #b26b00;
   --mz-danger: #c62828;
-  --mz-info: #0e7490;
-  --mz-focus-ring: #1f5eff66;
-  --mz-radius-control: 6px;
-  --mz-radius-card: 10px;
-  --mz-radius-dialog: 14px;
-  --mz-shadow-1: 0 1px 2px rgba(17, 24, 39, 0.06), 0 1px 1px rgba(17, 24, 39, 0.04);
-  --mz-shadow-2: 0 2px 6px rgba(17, 24, 39, 0.08), 0 1px 2px rgba(17, 24, 39, 0.05);
-  --mz-shadow-3: 0 8px 24px rgba(17, 24, 39, 0.12), 0 2px 6px rgba(17, 24, 39, 0.06);
+  --mz-info: #0e6b69;
+  --mz-focus-ring: #bf4e1266;
+
+  --mz-radius-xs: 4px;
+  --mz-radius-control: 8px;
+  --mz-radius-card: 12px;
+  --mz-radius-dialog: 16px;
+  --mz-radius-pill: 999px;
+
+  /* Layered shadows tinted with the warm ink: light falling on an object, not a grey smudge. */
+  --mz-shadow-0: 0 0 0 1px rgba(23, 20, 15, 0.05);
+  --mz-shadow-1: 0 1px 1px rgba(23, 20, 15, 0.04), 0 2px 2px rgba(23, 20, 15, 0.03);
+  --mz-shadow-2: 0 1px 1px rgba(23, 20, 15, 0.04), 0 2px 4px rgba(23, 20, 15, 0.04), 0 4px 8px rgba(23, 20, 15, 0.04);
+  --mz-shadow-3: 0 1px 2px rgba(23, 20, 15, 0.04), 0 4px 8px rgba(23, 20, 15, 0.05), 0 12px 24px rgba(23, 20, 15, 0.07), 0 24px 48px rgba(23, 20, 15, 0.06);
+
+  /* Motion (SPEC §21.6). Enter eases out; exit eases in and runs at 70 % of the duration. */
+  --mz-duration-instant: 100ms;
+  --mz-duration-fast: 150ms;
+  --mz-duration-base: 200ms;
+  --mz-duration-slow: 260ms;
+  --mz-duration-slower: 400ms;
+  --mz-duration-instant-exit: 70ms;
+  --mz-duration-fast-exit: 105ms;
+  --mz-duration-base-exit: 140ms;
+  --mz-duration-slow-exit: 182ms;
+  --mz-duration-slower-exit: 280ms;
+  --mz-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --mz-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --mz-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --mz-ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --mz-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --mz-travel-sm: 4px;
+  --mz-travel-md: 8px;
+  --mz-travel-lg: 12px;
+  --mz-enter-scale: 0.97;
+  --mz-press-scale: 0.985;
+
   --mz-font-ui: "Inter", "Inter Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mz-font-numeric: "Inter", ui-monospace, "SF Mono", monospace;
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  --mz-bg-canvas: #0b1220;
-  --mz-bg-surface: #111a2e;
-  --mz-bg-subtle: #182238;
-  --mz-border-default: #26324a;
-  --mz-text-primary: #e5e9f0;
-  --mz-text-secondary: #9aa5b5;
-  --mz-text-inverse: #0b1220;
-  --mz-primary: #6d94ff;
-  --mz-primary-hover: #86a6ff;
-  --mz-primary-subtle: #1b2540;
-  --mz-primary-on: #0b1220;
+  --mz-bg-canvas: #0e0d0c;
+  --mz-bg-surface: #171614;
+  --mz-bg-subtle: #201e1b;
+  --mz-border-default: #302d29;
+  --mz-text-primary: #edeae5;
+  --mz-text-secondary: #a29a90;
+  --mz-text-inverse: #0e0d0c;
+  --mz-primary: #f3a272;
+  --mz-primary-hover: #f8b892;
+  --mz-primary-subtle: #3d1f0c;
+  --mz-primary-on: #0e0d0c;
   --mz-success: #3ccb93;
   --mz-warning: #f5b342;
   --mz-danger: #ff6b6b;
-  --mz-info: #4fd1e5;
-  --mz-focus-ring: #6d94ff66;
+  --mz-info: #46c7c4;
+  --mz-focus-ring: #f3a27266;
+
+  /* On dark surfaces a drop shadow is invisible; depth comes from a lifted hairline instead. */
+  --mz-shadow-0: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --mz-shadow-1: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --mz-shadow-2: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 2px 6px rgba(0, 0, 0, 0.5);
+  --mz-shadow-3: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 12px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
 }
 
+/*
+ * Reduced motion: cut every animation and transition, but keep them running for one frame so
+ * that state-driven exit animations still fire their `animationend` and the element unmounts.
+ */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

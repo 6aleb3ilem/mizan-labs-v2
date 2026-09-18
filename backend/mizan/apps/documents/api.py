@@ -21,16 +21,16 @@ from mizan.apps.documents.rendering import render_html, render_pdf
 from mizan.apps.documents.schemas import (
     DigestIn,
     DocumentOut,
+    DocumentTemplateIn,
+    DocumentTemplateOut,
+    DocumentTemplateSummaryOut,
+    DocumentTemplateVersionIn,
     PreviewIn,
     PrintProfileIn,
     PrintProfileOut,
     RenditionIn,
     RenditionOut,
     SuspiciousIn,
-    TemplateIn,
-    TemplateOut,
-    TemplateSummaryOut,
-    TemplateVersionIn,
 )
 from mizan.apps.identity.authz import authorize, requires
 from mizan.platform import context
@@ -56,7 +56,7 @@ def _get[M](model: type[M], pk: uuid.UUID) -> M:
 # --- templates ------------------------------------------------------------------------------------
 
 
-@router.get("/document-templates", response=list[TemplateSummaryOut])
+@router.get("/document-templates", response=list[DocumentTemplateSummaryOut])
 @requires("document_template", "view")
 def list_templates(request: HttpRequest, kind: str | None = None) -> list[DocumentTemplate]:
     qs = DocumentTemplate.objects.all().order_by("kind", "locale", "-version")
@@ -65,7 +65,7 @@ def list_templates(request: HttpRequest, kind: str | None = None) -> list[Docume
     return list(qs)
 
 
-@router.get("/document-templates/{uuid:template_id}", response=TemplateOut)
+@router.get("/document-templates/{uuid:template_id}", response=DocumentTemplateOut)
 @requires("document_template", "view")
 def get_template(request: HttpRequest, template_id: uuid.UUID) -> DocumentTemplate:
     return _get(DocumentTemplate, template_id)
@@ -73,11 +73,11 @@ def get_template(request: HttpRequest, template_id: uuid.UUID) -> DocumentTempla
 
 @router.post(
     "/document-templates",
-    response={201: TemplateOut},
+    response={201: DocumentTemplateOut},
     summary="Create a draft template (version 1)",
 )
 @requires("document_template", "configure")
-def create_template(request: HttpRequest, payload: TemplateIn) -> Status[DocumentTemplate]:
+def create_template(request: HttpRequest, payload: DocumentTemplateIn) -> Status[DocumentTemplate]:
     if DocumentTemplate.objects.filter(
         kind=payload.kind, locale=payload.locale, branch_id=payload.branch_id
     ).exists():
@@ -95,12 +95,12 @@ def create_template(request: HttpRequest, payload: TemplateIn) -> Status[Documen
 
 @router.post(
     "/document-templates/{uuid:template_id}/versions",
-    response={201: TemplateOut},
+    response={201: DocumentTemplateOut},
     summary="New draft version",
 )
 @requires("document_template", "configure")
 def new_template_version(
-    request: HttpRequest, template_id: uuid.UUID, payload: TemplateVersionIn
+    request: HttpRequest, template_id: uuid.UUID, payload: DocumentTemplateVersionIn
 ) -> Status[DocumentTemplate]:
     source = _get(DocumentTemplate, template_id)
     latest = (
@@ -134,7 +134,7 @@ def new_template_version(
 
 @router.post(
     "/document-templates/{uuid:template_id}:approve",
-    response=TemplateOut,
+    response=DocumentTemplateOut,
     summary="Approve: becomes the active version",
 )
 @requires("document_template", "configure")

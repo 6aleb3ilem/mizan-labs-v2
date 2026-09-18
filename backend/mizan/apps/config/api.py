@@ -46,7 +46,6 @@ from mizan.apps.config.schemas import (
     ServicePatch,
     SieveSetIn,
     SieveSetOut,
-    SimulateIn,
     SpecimenTypeIn,
     SpecimenTypeOut,
     TaxRuleIn,
@@ -60,6 +59,7 @@ from mizan.apps.config.schemas import (
     VocabularyEntryPatch,
     WorkflowDefinitionIn,
     WorkflowOut,
+    WorkflowSimulateIn,
 )
 from mizan.apps.identity.authz import requires
 from mizan.platform.api.errors import Conflict, UnprocessableEntity
@@ -427,7 +427,7 @@ def activate_workflow(request: HttpRequest, workflow_id: uuid.UUID) -> dict[str,
 )
 @requires("workflow", "view")
 def simulate_workflow(
-    request: HttpRequest, workflow_id: uuid.UUID, payload: SimulateIn
+    request: HttpRequest, workflow_id: uuid.UUID, payload: WorkflowSimulateIn
 ) -> list[dict[str, Any]]:
     return workflows.simulate(services.get_or_404(Workflow, workflow_id), payload.actions)
 

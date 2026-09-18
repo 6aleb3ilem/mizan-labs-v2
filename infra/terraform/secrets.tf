@@ -9,7 +9,9 @@ locals {
 
 resource "google_secret_manager_secret" "db_url" {
   secret_id  = "${local.name}-database-url"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
   depends_on = [google_project_service.apis]
 }
 resource "google_secret_manager_secret_version" "db_url" {
@@ -19,7 +21,9 @@ resource "google_secret_manager_secret_version" "db_url" {
 
 resource "google_secret_manager_secret" "db_url_migrator" {
   secret_id  = "${local.name}-database-url-migrator"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
 }
 resource "google_secret_manager_secret_version" "db_url_migrator" {
   secret      = google_secret_manager_secret.db_url_migrator.id
@@ -28,7 +32,9 @@ resource "google_secret_manager_secret_version" "db_url_migrator" {
 
 resource "google_secret_manager_secret" "django_secret" {
   secret_id  = "${local.name}-secret-key"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
 }
 resource "google_secret_manager_secret_version" "django_secret" {
   secret      = google_secret_manager_secret.django_secret.id
@@ -37,7 +43,9 @@ resource "google_secret_manager_secret_version" "django_secret" {
 
 resource "google_secret_manager_secret" "r2_key" {
   secret_id  = "${local.name}-r2-access-key"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
 }
 resource "google_secret_manager_secret_version" "r2_key" {
   secret      = google_secret_manager_secret.r2_key.id
@@ -46,7 +54,9 @@ resource "google_secret_manager_secret_version" "r2_key" {
 
 resource "google_secret_manager_secret" "r2_secret" {
   secret_id  = "${local.name}-r2-secret-key"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
 }
 resource "google_secret_manager_secret_version" "r2_secret" {
   secret      = google_secret_manager_secret.r2_secret.id
@@ -55,7 +65,9 @@ resource "google_secret_manager_secret_version" "r2_secret" {
 
 resource "google_secret_manager_secret" "smtp_password" {
   secret_id  = "${local.name}-smtp-password"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
 }
 resource "google_secret_manager_secret_version" "smtp_password" {
   secret      = google_secret_manager_secret.smtp_password.id

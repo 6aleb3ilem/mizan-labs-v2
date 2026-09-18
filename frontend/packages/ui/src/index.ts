@@ -7,6 +7,8 @@ export * from "./components/DataTable";
 export * from "./components/Feedback";
 export * from "./components/FormField";
 export * from "./components/Input";
+export * from "./components/Logo";
+export * from "./components/Motion";
 export * from "./components/Misc";
 export * from "./components/Navigation";
 export * from "./components/Overlay";

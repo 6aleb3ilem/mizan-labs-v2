@@ -1,6 +1,7 @@
 /** Route map of the back-office (SPEC Appendix O). */
-import { LoginPage, NotFoundPage } from "@mizan/app-kit";
+import { LoginPage, NotFoundPage, useSession } from "@mizan/app-kit";
 import { Outlet, createRootRoute, createRoute, createRouter, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import { tokens } from "./app";
 import { HomePage } from "./routes/home";
@@ -18,9 +19,21 @@ function NotFound() {
   const navigate = useNavigate();
   return <NotFoundPage onHome={() => void navigate({ to: "/home" })} />;
 }
+/**
+ * The login route.
+ *
+ * Signing in stores tokens rather than navigating, so the redirect belongs here — and in an
+ * effect, not in the render body: a `navigate()` call during render is dropped by the router,
+ * which left a signed-in user sitting on the login form with a valid session. The effect also
+ * covers arriving at /login with a session already in hand.
+ */
 function Login() {
   const navigate = useNavigate();
-  if (tokens.get()) void navigate({ to: "/home" });
+  const { status } = useSession();
+  const signedIn = status === "authenticated";
+  useEffect(() => {
+    if (signedIn) void navigate({ to: "/home", replace: true });
+  }, [signedIn, navigate]);
   return <LoginPage title="Mizan Labs" askTenant />;
 }
 
