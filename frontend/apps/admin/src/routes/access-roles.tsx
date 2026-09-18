@@ -277,7 +277,8 @@ export function RolesPage() {
 /* ----------------------------------------------------------------- matrix */
 
 /** A grant keyed for O(1) lookup while the grid renders a few thousand cells. */
-const grantKey = (resource: string, action: string) => `${resource} ${action}`;
+// `::` cannot occur inside a resource or action, which are lowercase identifiers.
+const grantKey = (resource: string, action: string) => `${resource}::${action}`;
 
 export function RoleMatrixPage() {
   const { t } = useTranslation();
