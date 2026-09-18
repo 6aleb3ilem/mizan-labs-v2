@@ -141,7 +141,7 @@ class WorkflowDefinitionIn(Schema):
     transitions: list[WorkflowTransitionIn]
 
 
-class SimulateIn(Schema):
+class WorkflowSimulateIn(Schema):
     actions: list[str]
 
 

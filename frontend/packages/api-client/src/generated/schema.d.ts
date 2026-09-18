@@ -2264,6 +2264,117 @@ export interface components {
             /** Verify Token */
             verify_token: string;
         };
+        /** DocumentTemplateIn */
+        DocumentTemplateIn: {
+            /** Branch Id */
+            branch_id?: string | null;
+            /**
+             * Css
+             * @default
+             */
+            css: string;
+            /** Html */
+            html: string;
+            /** Kind */
+            kind: string;
+            /**
+             * Locale
+             * @default fr
+             */
+            locale: string;
+            /**
+             * Name
+             * @default
+             */
+            name: string;
+            /**
+             * Sample Data
+             * @default {}
+             */
+            sample_data: {
+                [key: string]: unknown;
+            };
+            /**
+             * Variables
+             * @default {}
+             */
+            variables: {
+                [key: string]: unknown;
+            };
+        };
+        /** DocumentTemplateOut */
+        DocumentTemplateOut: {
+            /** Approved At */
+            approved_at: string | null;
+            /** Branch Id */
+            branch_id: string | null;
+            /** Css */
+            css: string;
+            /** Html */
+            html: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Locale */
+            locale: string;
+            /** Name */
+            name: string;
+            /** Sample Data */
+            sample_data: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+            /** Variables */
+            variables: {
+                [key: string]: unknown;
+            };
+            /** Version */
+            version: number;
+        };
+        /** DocumentTemplateSummaryOut */
+        DocumentTemplateSummaryOut: {
+            /** Approved At */
+            approved_at: string | null;
+            /** Branch Id */
+            branch_id: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Locale */
+            locale: string;
+            /** Name */
+            name: string;
+            /** Status */
+            status: string;
+            /** Version */
+            version: number;
+        };
+        /** DocumentTemplateVersionIn */
+        DocumentTemplateVersionIn: {
+            /** Css */
+            css?: string | null;
+            /** Html */
+            html?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Sample Data */
+            sample_data?: {
+                [key: string]: unknown;
+            } | null;
+            /** Variables */
+            variables?: {
+                [key: string]: unknown;
+            } | null;
+        };
         /** GrantIn */
         GrantIn: {
             /** Action */
@@ -2479,6 +2590,18 @@ export interface components {
             read_at: string | null;
             /** Title */
             title: string;
+        };
+        /** NotificationSimulateIn */
+        NotificationSimulateIn: {
+            /** Branch Id */
+            branch_id?: string | null;
+            /**
+             * Payload
+             * @default {}
+             */
+            payload: {
+                [key: string]: unknown;
+            };
         };
         /** NumberingSchemeIn */
         NumberingSchemeIn: {
@@ -3429,18 +3552,6 @@ export interface components {
             /** Status */
             status: string;
         };
-        /** SimulateIn */
-        SimulateIn: {
-            /** Branch Id */
-            branch_id?: string | null;
-            /**
-             * Payload
-             * @default {}
-             */
-            payload: {
-                [key: string]: unknown;
-            };
-        };
         /** SpecimenTypeIn */
         SpecimenTypeIn: {
             /** Code */
@@ -3671,45 +3782,6 @@ export interface components {
              * @default
              */
             subject: string;
-        };
-        /** TemplateSummaryOut */
-        TemplateSummaryOut: {
-            /** Approved At */
-            approved_at: string | null;
-            /** Branch Id */
-            branch_id: string | null;
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Kind */
-            kind: string;
-            /** Locale */
-            locale: string;
-            /** Name */
-            name: string;
-            /** Status */
-            status: string;
-            /** Version */
-            version: number;
-        };
-        /** TemplateVersionIn */
-        TemplateVersionIn: {
-            /** Css */
-            css?: string | null;
-            /** Html */
-            html?: string | null;
-            /** Name */
-            name?: string | null;
-            /** Sample Data */
-            sample_data?: {
-                [key: string]: unknown;
-            } | null;
-            /** Variables */
-            variables?: {
-                [key: string]: unknown;
-            } | null;
         };
         /** TenantCreate */
         TenantCreate: {
@@ -4214,6 +4286,11 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** WorkflowSimulateIn */
+        WorkflowSimulateIn: {
+            /** Actions */
+            actions: string[];
+        };
         /** WorkflowStateIn */
         WorkflowStateIn: {
             /** Code */
@@ -4335,6 +4412,10 @@ export type SchemaDepartmentOut = components['schemas']['DepartmentOut'];
 export type SchemaDepartmentPatch = components['schemas']['DepartmentPatch'];
 export type SchemaDigestIn = components['schemas']['DigestIn'];
 export type SchemaDocumentOut = components['schemas']['DocumentOut'];
+export type SchemaDocumentTemplateIn = components['schemas']['DocumentTemplateIn'];
+export type SchemaDocumentTemplateOut = components['schemas']['DocumentTemplateOut'];
+export type SchemaDocumentTemplateSummaryOut = components['schemas']['DocumentTemplateSummaryOut'];
+export type SchemaDocumentTemplateVersionIn = components['schemas']['DocumentTemplateVersionIn'];
 export type SchemaGrantIn = components['schemas']['GrantIn'];
 export type SchemaGrantOut = components['schemas']['GrantOut'];
 export type SchemaInboxFilters = components['schemas']['InboxFilters'];
@@ -4347,6 +4428,7 @@ export type SchemaMembershipOut = components['schemas']['MembershipOut'];
 export type SchemaMeOut = components['schemas']['MeOut'];
 export type SchemaMilestoneIn = components['schemas']['MilestoneIn'];
 export type SchemaNotificationOut = components['schemas']['NotificationOut'];
+export type SchemaNotificationSimulateIn = components['schemas']['NotificationSimulateIn'];
 export type SchemaNumberingSchemeIn = components['schemas']['NumberingSchemeIn'];
 export type SchemaNumberingSchemeOut = components['schemas']['NumberingSchemeOut'];
 export type SchemaNumberingVersionIn = components['schemas']['NumberingVersionIn'];
@@ -4393,7 +4475,6 @@ export type SchemaSignatoryIn = components['schemas']['SignatoryIn'];
 export type SchemaSignatoryOut = components['schemas']['SignatoryOut'];
 export type SchemaSignatoryPatch = components['schemas']['SignatoryPatch'];
 export type SchemaSimulatedDeliveryOut = components['schemas']['SimulatedDeliveryOut'];
-export type SchemaSimulateIn = components['schemas']['SimulateIn'];
 export type SchemaSpecimenTypeIn = components['schemas']['SpecimenTypeIn'];
 export type SchemaSpecimenTypeOut = components['schemas']['SpecimenTypeOut'];
 export type SchemaSuspiciousIn = components['schemas']['SuspiciousIn'];
@@ -4404,8 +4485,6 @@ export type SchemaTemplateIn = components['schemas']['TemplateIn'];
 export type SchemaTemplateOut = components['schemas']['TemplateOut'];
 export type SchemaTemplatePatch = components['schemas']['TemplatePatch'];
 export type SchemaTemplatePreviewIn = components['schemas']['TemplatePreviewIn'];
-export type SchemaTemplateSummaryOut = components['schemas']['TemplateSummaryOut'];
-export type SchemaTemplateVersionIn = components['schemas']['TemplateVersionIn'];
 export type SchemaTenantCreate = components['schemas']['TenantCreate'];
 export type SchemaTenantOut = components['schemas']['TenantOut'];
 export type SchemaTenantPatch = components['schemas']['TenantPatch'];
@@ -4425,6 +4504,7 @@ export type SchemaVocabularyEntryOut = components['schemas']['VocabularyEntryOut
 export type SchemaVocabularyEntryPatch = components['schemas']['VocabularyEntryPatch'];
 export type SchemaWorkflowDefinitionIn = components['schemas']['WorkflowDefinitionIn'];
 export type SchemaWorkflowOut = components['schemas']['WorkflowOut'];
+export type SchemaWorkflowSimulateIn = components['schemas']['WorkflowSimulateIn'];
 export type SchemaWorkflowStateIn = components['schemas']['WorkflowStateIn'];
 export type SchemaWorkflowStateOut = components['schemas']['WorkflowStateOut'];
 export type SchemaWorkflowTransitionIn = components['schemas']['WorkflowTransitionIn'];
@@ -4786,7 +4866,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TemplateSummaryOut"][];
+                    "application/json": components["schemas"]["DocumentTemplateSummaryOut"][];
                 };
             };
         };
@@ -4800,7 +4880,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TemplateIn"];
+                "application/json": components["schemas"]["DocumentTemplateIn"];
             };
         };
         responses: {
@@ -4810,7 +4890,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TemplateOut"];
+                    "application/json": components["schemas"]["DocumentTemplateOut"];
                 };
             };
         };
@@ -4832,7 +4912,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TemplateOut"];
+                    "application/json": components["schemas"]["DocumentTemplateOut"];
                 };
             };
         };
@@ -4854,7 +4934,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TemplateOut"];
+                    "application/json": components["schemas"]["DocumentTemplateOut"];
                 };
             };
         };
@@ -4894,7 +4974,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TemplateVersionIn"];
+                "application/json": components["schemas"]["DocumentTemplateVersionIn"];
             };
         };
         responses: {
@@ -4904,7 +4984,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TemplateOut"];
+                    "application/json": components["schemas"]["DocumentTemplateOut"];
                 };
             };
         };
@@ -5541,7 +5621,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SimulateIn"];
+                "application/json": components["schemas"]["NotificationSimulateIn"];
             };
         };
         responses: {
@@ -7353,7 +7433,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SimulateIn"];
+                "application/json": components["schemas"]["WorkflowSimulateIn"];
             };
         };
         responses: {

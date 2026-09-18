@@ -6,7 +6,7 @@ from ninja import Schema
 from pydantic import Field
 
 
-class TemplateOut(Schema):
+class DocumentTemplateOut(Schema):
     id: uuid.UUID
     branch_id: uuid.UUID | None
     kind: str
@@ -21,7 +21,7 @@ class TemplateOut(Schema):
     approved_at: dt.datetime | None
 
 
-class TemplateSummaryOut(Schema):
+class DocumentTemplateSummaryOut(Schema):
     id: uuid.UUID
     branch_id: uuid.UUID | None
     kind: str
@@ -32,7 +32,7 @@ class TemplateSummaryOut(Schema):
     approved_at: dt.datetime | None
 
 
-class TemplateIn(Schema):
+class DocumentTemplateIn(Schema):
     kind: str = Field(pattern=r"^[A-Z0-9_.-]{2,64}$")
     locale: str = "fr"
     branch_id: uuid.UUID | None = None
@@ -43,7 +43,7 @@ class TemplateIn(Schema):
     sample_data: dict[str, Any] = {}
 
 
-class TemplateVersionIn(Schema):
+class DocumentTemplateVersionIn(Schema):
     name: str | None = None
     html: str | None = None
     css: str | None = None
