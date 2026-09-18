@@ -1,10 +1,10 @@
 /** The admin console shell: sections from SPEC §23, menus filtered by permissions. */
 import { useInbox, useSession, useOnline } from "@mizan/app-kit";
 import { useTranslation } from "@mizan/i18n";
-import { AppShell, Button, CommandPalette, DropdownMenu, Select, Spinner, type CommandItem, type NavItem, type NavSection } from "@mizan/ui";
+import { AppShell, Button, CommandPalette, DropdownMenu, Select, Spinner, type CommandItem, type NavItem, type NavSection, Logo } from "@mizan/ui";
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
-  Bell, BookText, Building2, ClipboardList, FileText, Hash, KeyRound, Landmark, LayoutDashboard, ListTree, Mail, Moon, Plug, Search, Server, Settings2, ShieldCheck, Tags, User, Users, Wand2, Workflow,
+  Bell, BookText, Building2, ClipboardList, FileText, Hash, KeyRound, Landmark, LayoutDashboard, ListTree, Mail, Moon, Plug, Search, Server, ShieldCheck, Tags, User, Users, Wand2, Workflow,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -88,9 +88,8 @@ export function AdminShell() {
   return (
     <AppShell
       brand={
-        <Link to="/" className="flex items-center gap-2 text-md font-semibold">
-          <Settings2 className="size-5 text-primary" aria-hidden />
-          {t("common.app_name")}
+        <Link to="/" className="flex items-center gap-2.5 rounded-control press">
+          <Logo size={26} label={t("common.app_name")} />
         </Link>
       }
       sections={sections}

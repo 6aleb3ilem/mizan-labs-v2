@@ -14,7 +14,8 @@ import { useRef, useState, type ReactNode } from "react";
 import { cn } from "../cn";
 import { Button } from "./Button";
 import { Checkbox } from "./Toggle";
-import { EmptyState, SkeletonRows } from "./Feedback";
+import { EmptyState } from "./Feedback";
+import { SkeletonRows } from "./Motion";
 
 export type { ColumnDef };
 

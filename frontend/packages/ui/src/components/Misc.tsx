@@ -81,6 +81,4 @@ export function DescriptionList({ items, className, columns = 2 }: { items: { la
   );
 }
 
-export function Kbd({ children }: { children: ReactNode }) {
-  return <kbd className="rounded border border-line bg-subtle px-1.5 py-0.5 font-sans text-xs text-muted">{children}</kbd>;
-}
+export { Kbd, useIsApple, useModifierKey } from "./Motion";

@@ -2,7 +2,7 @@
 import { useApi } from "@mizan/api-client";
 import { useInbox, useOnline, useSession } from "@mizan/app-kit";
 import { useTranslation } from "@mizan/i18n";
-import { AppShell, Button, CommandPalette, DropdownMenu, Select, Spinner, type CommandItem, type NavItem, type NavSection } from "@mizan/ui";
+import { AppShell, Button, CommandPalette, DropdownMenu, Select, Spinner, type CommandItem, type NavItem, type NavSection, Logo } from "@mizan/ui";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Bell, Briefcase, FlaskConical, FolderKanban, Home, Inbox, Landmark, Search, Truck, User, Wrench } from "lucide-react";
@@ -116,9 +116,8 @@ export function BackOfficeShell() {
   return (
     <AppShell
       brand={
-        <Link to="/home" className="flex items-center gap-2 text-md font-semibold">
-          <FlaskConical className="size-5 text-primary" aria-hidden />
-          {t("common.app_name")}
+        <Link to="/home" className="flex items-center gap-2.5 rounded-control press">
+          <Logo size={26} label={t("common.app_name")} />
         </Link>
       }
       sections={sections}

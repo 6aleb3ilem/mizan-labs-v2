@@ -1,5 +1,5 @@
 import { applyTheme, type ThemeName } from "@mizan/tokens";
-import { paletteVariables } from "@mizan/ui";
+import { paletteVariables, useTransitionSuppressor } from "@mizan/ui";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export type ThemeChoice = ThemeName | "system";
@@ -36,11 +36,19 @@ export function ThemeProvider({ children, initialBrand }: { children: ReactNode;
     return () => media.removeEventListener("change", listener);
   }, []);
 
+  /*
+   * The whole palette changes at once here. Without suppressing transitions first, every
+   * element with a colour transition animates simultaneously and the flip reads as a wash
+   * rolling across the page rather than a switch.
+   */
+  const suppressTransitions = useTransitionSuppressor();
   useEffect(() => {
-    const root = document.documentElement;
-    applyTheme(root, theme, brand);
-    for (const [name, value] of Object.entries(paletteVariables(theme))) root.style.setProperty(name, value);
-  }, [theme, brand]);
+    suppressTransitions(() => {
+      const root = document.documentElement;
+      applyTheme(root, theme, brand);
+      for (const [name, value] of Object.entries(paletteVariables(theme))) root.style.setProperty(name, value);
+    });
+  }, [theme, brand, suppressTransitions]);
 
   const setChoice = useCallback((next: ThemeChoice) => {
     setChoiceState(next);

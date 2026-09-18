@@ -1,4 +1,4 @@
-/* Tailwind v4 utilities bound to the design tokens (SPEC §21.2). Import once per app. */
+/* Tailwind v4 utilities bound to the design tokens (SPEC §21.2, §21.6). Import once per app. */
 @import "tailwindcss";
 @import "@mizan/tokens/tokens.css";
 
@@ -11,6 +11,8 @@
   --color-primary-hover: var(--mz-primary-hover);
   --color-primary-subtle: var(--mz-primary-subtle);
   --color-primary-on: var(--mz-primary-on);
+  --color-brand: var(--mz-brand-orange);
+  --color-aqua: var(--mz-brand-aqua);
   --color-success: var(--mz-success);
   --color-warning: var(--mz-warning);
   --color-danger: var(--mz-danger);
@@ -18,9 +20,11 @@
   --color-text: var(--mz-text-primary);
   --color-muted: var(--mz-text-secondary);
   --color-inverse: var(--mz-text-inverse);
+  --radius-xs: var(--mz-radius-xs);
   --radius-control: var(--mz-radius-control);
   --radius-card: var(--mz-radius-card);
   --radius-dialog: var(--mz-radius-dialog);
+  --shadow-0: var(--mz-shadow-0);
   --shadow-1: var(--mz-shadow-1);
   --shadow-2: var(--mz-shadow-2);
   --shadow-3: var(--mz-shadow-3);
@@ -32,6 +36,10 @@
   --text-lg: 20px;
   --text-xl: 24px;
   --text-2xl: 30px;
+  --ease-out: var(--mz-ease-out);
+  --ease-in: var(--mz-ease-in);
+  --ease-spring: var(--mz-ease-spring);
+  --ease-emphasized: var(--mz-ease-emphasized);
 }
 
 @layer base {
@@ -40,22 +48,199 @@
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Lets height/width animate to and from `auto` (accordions, expanding rows). */
+    interpolate-size: allow-keywords;
   }
   body {
     margin: 0;
     background: var(--mz-bg-canvas);
     color: var(--mz-text-primary);
   }
-  .tabular { font-variant-numeric: tabular-nums; }
+
+  /* Headings break on meaning, body copy avoids orphans. */
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  /* Figures must never reflow as they change: tabular digits everywhere numbers live. */
+  .tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+  ::selection {
+    background: var(--mz-primary-subtle);
+    color: var(--mz-text-primary);
+  }
+
+  /* Keyboard focus only — a mouse click should not paint a ring. */
   :focus-visible {
     outline: 2px solid var(--mz-focus-ring);
     outline-offset: 2px;
+    border-radius: var(--mz-radius-xs);
   }
+
+  /* No 300 ms tap delay and no blue flash on touch. */
+  button, a, [role="button"], [role="tab"], label, summary {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Thin, theme-aware scrollbars: chrome should not shout over content. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--mz-border-default) transparent;
+  }
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-color: var(--mz-border-default);
+  }
+  *::-webkit-scrollbar-thumb:hover { background-color: var(--mz-text-secondary); }
+
+  /*
+   * Set by `AppShell` while the theme changes and while the window is being resized. Without it
+   * every transitioning property animates at once on a theme flip, and resizing turns layout
+   * jumps into visible slides.
+   */
+  .mz-no-transitions,
+  .mz-no-transitions * {
+    transition: none !important;
+    animation: none !important;
+  }
+
   @media print {
     .no-print { display: none !important; }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion primitives
+ *
+ * Transform and opacity only. Every surface enters with `--mz-ease-out`
+ * or `--mz-ease-spring` and leaves faster with `--mz-ease-in`, so that a
+ * dismissal never makes the user wait. Radix drives them through
+ * `data-state`, which keeps exits animated instead of unmounted.
+ * ------------------------------------------------------------------ */
+
+@keyframes mz-fade-in { from { opacity: 0; } }
+@keyframes mz-fade-out { to { opacity: 0; } }
+
+@keyframes mz-scale-in {
+  from { opacity: 0; transform: scale(var(--mz-enter-scale)); }
+}
+@keyframes mz-scale-out {
+  to { opacity: 0; transform: scale(var(--mz-enter-scale)); }
+}
+
+@keyframes mz-dialog-in {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + var(--mz-travel-md))) scale(var(--mz-enter-scale)); }
+}
+@keyframes mz-dialog-out {
+  to { opacity: 0; transform: translate(-50%, calc(-50% + var(--mz-travel-sm))) scale(var(--mz-enter-scale)); }
+}
+
+@keyframes mz-slide-from-right { from { transform: translate3d(100%, 0, 0); } }
+@keyframes mz-slide-to-right { to { transform: translate3d(100%, 0, 0); } }
+@keyframes mz-slide-from-left { from { transform: translate3d(-100%, 0, 0); } }
+@keyframes mz-slide-to-left { to { transform: translate3d(-100%, 0, 0); } }
+@keyframes mz-slide-from-bottom { from { transform: translate3d(0, 100%, 0); } }
+@keyframes mz-slide-to-bottom { to { transform: translate3d(0, 100%, 0); } }
+
+@keyframes mz-shimmer { to { background-position-x: -200%; } }
+
+@keyframes mz-spin { to { transform: rotate(360deg); } }
+
+/* A single, soft attention pulse — for a row that just changed under the user. */
+@keyframes mz-highlight {
+  from { background-color: var(--mz-primary-subtle); }
+  to { background-color: transparent; }
+}
+
+@layer components {
+  /* Backdrop. Blur costs GPU, so it is applied once here and nowhere else. */
+  .mz-overlay {
+    background: color-mix(in srgb, var(--mz-brand-ink) 45%, transparent);
+    backdrop-filter: blur(2px);
+    animation: mz-fade-in var(--mz-duration-base) var(--mz-ease-out);
+  }
+  .mz-overlay[data-state="closed"] {
+    animation: mz-fade-out var(--mz-duration-base-exit) var(--mz-ease-in);
+  }
+
+  /* Centred dialog: rises 8 px and settles, leaves straight down and faster. */
+  .mz-dialog {
+    animation: mz-dialog-in var(--mz-duration-slow) var(--mz-ease-spring);
+  }
+  .mz-dialog[data-state="closed"] {
+    animation: mz-dialog-out var(--mz-duration-slow-exit) var(--mz-ease-in);
+  }
+
+  /*
+   * Menus, popovers, tooltips and select content. Radix reports where the trigger is, so the
+   * surface grows out of it rather than out of its own centre.
+   */
+  .mz-pop {
+    transform-origin: var(--radix-popper-transform-origin, center);
+    animation: mz-scale-in var(--mz-duration-fast) var(--mz-ease-out);
+  }
+  .mz-pop[data-state="closed"] {
+    animation: mz-scale-out var(--mz-duration-fast-exit) var(--mz-ease-in);
+  }
+
+  /*
+   * Edge panels. The spring curve is what makes them read as pulled into place; `will-change`
+   * promotes the layer for the duration only, and `DragSheet` clears it after the drag.
+   */
+  .mz-panel {
+    will-change: transform;
+  }
+  .mz-panel[data-side="right"] { animation: mz-slide-from-right var(--mz-duration-slower) var(--mz-ease-spring); }
+  .mz-panel[data-side="right"][data-state="closed"] { animation: mz-slide-to-right var(--mz-duration-slow) var(--mz-ease-in); }
+  .mz-panel[data-side="left"] { animation: mz-slide-from-left var(--mz-duration-slower) var(--mz-ease-spring); }
+  .mz-panel[data-side="left"][data-state="closed"] { animation: mz-slide-to-left var(--mz-duration-slow) var(--mz-ease-in); }
+  .mz-panel[data-side="bottom"] { animation: mz-slide-from-bottom var(--mz-duration-slower) var(--mz-ease-spring); }
+  .mz-panel[data-side="bottom"][data-state="closed"] { animation: mz-slide-to-bottom var(--mz-duration-slow) var(--mz-ease-in); }
+
+  /* While a sheet is dragged, the finger owns the position: no animation may fight it. */
+  .mz-panel[data-dragging="true"] {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Released below the dismiss threshold: spring back to the open position. */
+  .mz-panel[data-settling="true"] {
+    animation: none !important;
+    transition: transform var(--mz-duration-slow) var(--mz-ease-spring);
+  }
+
+  /* Loading placeholders: a slow sweep, shaped like the content it stands in for. */
+  .mz-skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--mz-bg-subtle) 0%,
+      color-mix(in srgb, var(--mz-bg-subtle) 60%, var(--mz-bg-surface)) 50%,
+      var(--mz-bg-subtle) 100%
+    );
+    background-size: 200% 100%;
+    animation: mz-shimmer 1.6s linear infinite;
+  }
+
+  .mz-highlight {
+    animation: mz-highlight 1.2s var(--mz-ease-out);
   }
 }
 
 @utility text-primary { color: var(--mz-text-primary); }
 @utility text-secondary { color: var(--mz-text-secondary); }
 @utility touch-target { min-height: 44px; min-width: 44px; }
+
+/* Interactive feedback. `press` gives a control the 1.5 % dip that makes a click feel received. */
+@utility press {
+  transition: transform var(--mz-duration-instant) var(--mz-ease-out);
+  &:active:not(:disabled) { transform: scale(var(--mz-press-scale)); }
+}
+
+/* The standard hover transition: colour only, instant enough to feel like a state not a fade. */
+@utility hover-colors {
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-duration: var(--mz-duration-instant);
+  transition-timing-function: var(--mz-ease-out);
+}

@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { cn } from "../cn";
 import { Button } from "./Button";
+import { useResizeTransitionGuard } from "./Motion";
 
 export type NavItem = { key: string; label: ReactNode; icon?: ReactNode; href: string; active?: boolean; badge?: ReactNode };
 export type NavSection = { key: string; label?: ReactNode; items: NavItem[] };
@@ -34,6 +35,8 @@ function readCollapsed(key: string): boolean {
 
 /** Sidebar + top bar shell with tablet collapse and phone bottom navigation (SPEC §21.6, §22.1). */
 export function AppShell({ brand, sections, renderLink, topbar, children, offline, offlineMessage, queued, onScan, scanLabel = "Scan", bottomNav, sidebarLabel = "Navigation", collapsedStorageKey = "mizan.sidebar" }: AppShellProps) {
+  // Resizing must not turn responsive layout jumps into visible slides.
+  useResizeTransitionGuard();
   const [collapsed, setCollapsed] = useState(() => readCollapsed(collapsedStorageKey));
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
@@ -45,7 +48,14 @@ export function AppShell({ brand, sections, renderLink, topbar, children, offlin
   }, [collapsed, collapsedStorageKey]);
 
   const linkClass = (active: boolean | undefined) =>
-    cn("flex items-center gap-3 rounded-control px-2.5 py-2 text-base text-text hover:bg-subtle", active && "bg-primary-subtle font-medium text-primary", collapsed && "justify-center px-0");
+    cn(
+      "relative flex items-center gap-3 rounded-control px-2.5 py-2 text-base text-text hover-colors hover:bg-subtle",
+      // The active marker is a brand bar on the leading edge, drawn with a pseudo-element so
+      // it costs no layout and can scale in from nothing.
+      active &&
+        "bg-primary-subtle font-medium text-primary before:absolute before:inset-y-1.5 before:-left-2 before:w-[3px] before:rounded-full before:bg-primary",
+      collapsed && "justify-center px-0",
+    );
 
   const nav = (
     <nav aria-label={sidebarLabel} className="flex flex-1 flex-col gap-4 overflow-y-auto px-2 py-3">

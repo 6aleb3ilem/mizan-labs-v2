@@ -1,7 +1,7 @@
 /** Client portal shell (SPEC §24): lighter density, bottom navigation on phones, one-handed use. */
 import { useInbox, useOnline, useSession } from "@mizan/app-kit";
 import { useTranslation } from "@mizan/i18n";
-import { AppShell, Button, DropdownMenu, Spinner, type NavItem, type NavSection } from "@mizan/ui";
+import { AppShell, Button, DropdownMenu, Spinner, type NavItem, type NavSection, Logo } from "@mizan/ui";
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Bell, FileText, FolderKanban, History, Home, MessageSquare, Receipt, User, Wallet } from "lucide-react";
 
@@ -35,8 +35,8 @@ export function PortalShell() {
   return (
     <AppShell
       brand={
-        <Link to="/home" className="text-md font-semibold">
-          {t("common.app_name")}
+        <Link to="/home" className="flex items-center rounded-control press">
+          <Logo size={26} label={t("common.app_name")} />
         </Link>
       }
       sections={sections}

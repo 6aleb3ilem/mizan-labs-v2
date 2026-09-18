@@ -1,26 +1,11 @@
-import { AlertTriangle, Inbox, Loader2, RefreshCw, SearchX } from "lucide-react";
+import { AlertTriangle, Inbox, RefreshCw, SearchX } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { cn } from "../cn";
 import { Button } from "./Button";
 
-export function Spinner({ className, label = "Loading" }: { className?: string; label?: string }) {
-  return <Loader2 className={cn("size-5 animate-spin text-muted", className)} role="status" aria-label={label} />;
-}
-
-export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-control bg-subtle", className)} aria-hidden />;
-}
-
-export function SkeletonRows({ rows = 5, className }: { rows?: number; className?: string }) {
-  return (
-    <div className={cn("flex flex-col gap-2", className)} aria-busy>
-      {Array.from({ length: rows }, (_, i) => (
-        <Skeleton key={i} className="h-9 w-full" />
-      ))}
-    </div>
-  );
-}
+// Loading placeholders live in ./Motion, next to the rules that govern how they animate.
+export { Skeleton, SkeletonRows, Spinner } from "./Motion";
 
 export type EmptyStateProps = { title: ReactNode; hint?: ReactNode; action?: ReactNode; icon?: ReactNode; className?: string; kind?: "empty" | "search" };
 
